@@ -1,0 +1,139 @@
+/* typography ----------------
+--------------------------  */
+
+section h1 {
+  font-size: 3rem;
+}
+
+section h2 {
+  font-size: 2.25rem;
+}
+
+section p {
+  opacity: 0.65;
+}
+
+.feature span {
+  color: var(--purple);
+  font-size: 0.75rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+footer {
+  font-family: 'Grandstander';
+  opacity: 0.75;
+}
+
+footer .logo-text span:first-child {
+  font-weight: 300;
+}
+
+@media (min-width: 768px) {
+  section h1,
+  section p {
+    max-width: 500px;
+  }
+}
+
+@media (max-width: 767px) {
+  section h1 {
+    font-size: 2.75rem;
+  }
+}
+
+/* layout --------------------
+--------------------------  */
+
+h1 {
+  max-width: 440px;
+}
+
+h2 {
+  margin-bottom: 1.15rem;
+}
+
+.feature span {
+  display: block; /* hack flexbox collapsing margins */
+  margin-top: 3rem;
+  margin-bottom: 1rem;
+}
+
+.nav {
+  margin-bottom: 4rem;
+}
+
+.nav .logo-text {
+  margin-left: 4px;
+}
+
+.poster {
+  margin-right: 10px;
+}
+
+.poster img {
+  width: 100%;
+}
+
+.posters-carousel {
+  padding: 1rem;
+  border: 3px solid rgba(255, 255, 255, 0.4);
+  border-radius: 10px;
+}
+
+.posters-carousel .row {
+  margin-bottom: 1rem;
+}
+
+.posters-carousel .row:last-child {
+  margin-bottom: 0;
+}
+
+section {
+  margin-bottom: 10rem;
+}
+
+.section-tablet img {
+  height: 300px;
+  /* width: 100%; */
+}
+
+.section-phone img {
+  height: 400px;
+}
+
+footer {
+  margin: 12rem 0 6em;
+}
+
+footer .logo-text {
+  font-size: 1.25rem;
+  /* opacity: 0.75; */
+}
+
+footer > span {
+  position: relative;
+  top: 1px;
+  margin-left: 2px;
+}
+
+@media (min-width: 992px) {
+  .feature h1 {
+    margin-top: 0;
+  }
+}
+
+@media (max-width: 991px) {
+  .feature h1 {
+    margin: 2rem auto;
+  }
+
+  .feature p {
+    margin: 0 auto;
+  }
+
+  .feature .btn {
+    margin-top: 1.25rem;
+  }
+}

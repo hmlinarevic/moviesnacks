@@ -1,0 +1,23 @@
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.logo-img {
+  position: relative;
+  top: -11px;
+}
+
+.logo-text {
+  font-family: 'Grandstander';
+  font-size: 1.55rem;
+}
+
+.logo-text span:first-child {
+  font-weight: 100;
+}
+
+.logo-text span:nth-child(2) {
+  color: #8e73ff;
+  font-weight: 700;
+}
