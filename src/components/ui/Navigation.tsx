@@ -1,7 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom'
 import {
   Container,
-  Button,
   Form,
   Nav,
   Navbar,
@@ -10,9 +9,9 @@ import {
 } from 'react-bootstrap'
 import Logo from '../logo'
 import SearchMovie from '../movie/SearchMovie'
-import './Navigation.css'
 import { useContext } from 'react'
 import { MovieContext } from '../../store/MoviesContext'
+import './Navigation.css'
 
 const Navigation = () => {
   const movieCtx = useContext(MovieContext)
