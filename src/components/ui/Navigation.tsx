@@ -17,15 +17,23 @@ const Navigation = () => {
   const movieCtx = useContext(MovieContext)
   const navigate = useNavigate()
 
-  const dropDownContent = movieCtx.favorites.map((f) => {
-    if (f) {
+  const dropDownContent = movieCtx.favorites.map((favoriteMovie) => {
+    if (favoriteMovie) {
       return (
-        <Link key={f.id} to={`/movie/${f.id}`} className="dropdown-item">
-          {f.title}
+        <Link
+          key={favoriteMovie.id}
+          className="dropdown-item"
+          to={`movie/${favoriteMovie.id}`}
+        >
+          {favoriteMovie.title}
         </Link>
       )
     }
   })
+
+  const handleClearFavorites = () => {
+    movieCtx.dispatch({ type: 'UPDATE-FAVORITES', payload: [] })
+  }
 
   return (
     <Container>
@@ -55,7 +63,14 @@ const Navigation = () => {
                 id="offcanvasNavbarDropdown-expand-md"
               >
                 {dropDownContent.length ? (
-                  dropDownContent
+                  <>
+                    {dropDownContent}
+
+                    <NavDropdown.Divider />
+                    <NavDropdown.Item onClick={handleClearFavorites}>
+                      clear favorites
+                    </NavDropdown.Item>
+                  </>
                 ) : (
                   <NavDropdown.Item disabled>empty</NavDropdown.Item>
                 )}

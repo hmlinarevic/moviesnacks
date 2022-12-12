@@ -1,6 +1,6 @@
 import { Container } from 'react-bootstrap'
 
-const MovieDiscovery = () => {
+const DiscoveryPage = () => {
   return (
     <Container>
       <div>
@@ -10,4 +10,4 @@ const MovieDiscovery = () => {
   )
 }
 
-export default MovieDiscovery
+export default DiscoveryPage

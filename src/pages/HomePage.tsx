@@ -4,9 +4,9 @@ import StaticPostersCarousel from '../components/ui/StaticPosterCarousel'
 import LogoText from '../components/logo/LogoText'
 import tabletUrl from '../assets/moviesnacks-tablet.png'
 import phoneUrl from '../assets/moviesnacks-phone.png'
-import './Home.css'
+import './HomePage.css'
 
-const Home = () => {
+const HomePage = () => {
   return (
     <>
       <Container>
@@ -79,4 +79,4 @@ const Home = () => {
   )
 }
 
-export default Home
+export default HomePage

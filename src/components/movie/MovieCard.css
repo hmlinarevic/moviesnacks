@@ -1,6 +1,9 @@
+.movie-card-container {
+  height: 370px;
+}
+
 .movie-card {
-  width: 100%;
-  height: 430px;
+  height: 100%;
   background-color: #000;
   color: white;
   border: 2px solid #333;
@@ -15,7 +18,7 @@
 
 .movie-card img {
   width: 100%;
-  max-height: 300px;
+  height: 100%;
   border-bottom: 1px solid #333;
   object-fit: cover;
 }
@@ -38,13 +41,29 @@
   transition: 150ms background-color;
 }
 
+.movie-card-btn-favorite {
+  background-color: orange;
+}
+
 .movie-card-btn:hover,
 .movie-card-btn:active {
   background-color: orange;
 }
 
 @media (min-width: 576px) and (max-width: 767px) {
-  .movie-card {
-    height: 360px;
+  .movie-card-container {
+    height: 300px;
+  }
+}
+
+@media (min-width: 992px) and (max-width: 1199px) {
+  .movie-card-container {
+    height: 280px;
+  }
+}
+
+@media (min-width: 1200px) and (max-width: 1400px) {
+  .movie-card-container {
+    height: 320px;
   }
 }

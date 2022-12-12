@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react'
+import { useState, useEffect, useRef, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { searchMovies } from '../../api/searchMovies'
 import { MovieContext } from '../../store/MoviesContext'
@@ -15,13 +15,14 @@ const SearchMovie = () => {
     const id = setTimeout(async () => {
       console.log('searching movies...', query)
 
-      moviesCtx.dispatch({ type: 'SET-ISLOADING', payload: true })
+      moviesCtx.dispatch({ type: 'UPDATE-ISLOADING', payload: true })
       navigate('/results')
 
       const searchResult = await searchMovies(query)
 
       // cached data
       if (Array.isArray(searchResult)) {
+        console.log('dispatching action', searchResult)
         moviesCtx.dispatch({ type: 'SEARCH', payload: searchResult })
       }
       // api response
@@ -35,7 +36,7 @@ const SearchMovie = () => {
           moviesCtx.dispatch({ type: 'SEARCH', payload: searchResult.results })
         }
       }
-      moviesCtx.dispatch({ type: 'SET-ISLOADING', payload: false })
+      moviesCtx.dispatch({ type: 'UPDATE-ISLOADING', payload: false })
     }, 1000)
 
     return () => {

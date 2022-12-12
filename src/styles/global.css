@@ -54,3 +54,37 @@ ul {
   padding: 0;
   list-style: none;
 }
+
+/* buttons ----------------
+--------------------------  */
+
+.btn-mybtn {
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.375rem;
+}
+
+.btn-mybtn-primary {
+  background-color: var(--purple);
+  border: 1px solid var(--purple);
+}
+
+.btn-mybtn-primary:active {
+  background-color: var(--purple-lighter);
+}
+
+.btn-mybtn-primary-outline {
+  background-color: transparent;
+  color: var(--purple);
+  border: 1px solid var(--purple);
+  outline: none;
+}
+
+.btn-mybtn-primary-outline:hover {
+  background-color: var(--purple);
+  border-color: var(--purple);
+  color: var(--black);
+}
+
+.btn-mybtn-primary-outline:active {
+  background-color: var(--purple-lighter);
+}

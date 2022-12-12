@@ -10,7 +10,7 @@ export interface MovieDetails {
   id: number
   title: string
   overview: string
-  release_date: string
-  poster_path: string
-  genres_ids: number[]
+  releaseDate: string
+  posterPath: string
+  genresIds: number[]
 }

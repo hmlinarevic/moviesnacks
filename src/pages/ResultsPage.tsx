@@ -3,11 +3,29 @@ import { Container, Row, Spinner } from 'react-bootstrap'
 import { MovieContext } from '../store/MoviesContext'
 import MovieCard from '../components/movie/MovieCard'
 
-const Results = () => {
+type FavoriteMovieIdsMap = { [id: string]: string }
+
+const ResultsPage = () => {
   const movieCtx = useContext(MovieContext)
 
+  let mapOfFavoriteMovieIds: FavoriteMovieIdsMap
+
+  if (movieCtx.favorites.length) {
+    mapOfFavoriteMovieIds = movieCtx.favorites.reduce((obj, favorite) => {
+      obj[favorite.id] = favorite.title
+
+      return obj
+    }, {} as FavoriteMovieIdsMap)
+  }
+
   const content = movieCtx.searched.map((movie) => {
-    if (!movie.poster_path) return null
+    let isFavorite
+
+    if (mapOfFavoriteMovieIds) {
+      isFavorite = Boolean(mapOfFavoriteMovieIds[movie.id])
+    }
+
+    if (!movie.posterPath) return null
 
     return (
       <MovieCard
@@ -15,7 +33,10 @@ const Results = () => {
         id={movie.id}
         title={movie.title}
         overview={movie.overview}
-        posterPath={movie.poster_path}
+        genresIds={movie.genresIds}
+        posterPath={movie.posterPath}
+        releaseDate={movie.releaseDate}
+        isFavorite={isFavorite}
       />
     )
   })
@@ -39,4 +60,4 @@ const Results = () => {
   )
 }
 
-export default Results
+export default ResultsPage

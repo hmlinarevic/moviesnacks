@@ -1,53 +1,82 @@
-import { useContext, MouseEvent } from 'react'
+import { useState, useCallback, useContext, MouseEvent, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Col, Card, Button } from 'react-bootstrap'
 import { MovieContext } from '../../store/MoviesContext'
+import { addDataIntoCache, getCacheData } from '../../utils/cache'
+import { MovieDetails } from '../../types/APIResponsesTypes'
 import HeartSvg from '../svg/HeartSvg'
 import './MovieCard.css'
+import { getMoviePoster } from '../../utils'
 
-const { VITE_IMG_API_URL: IMG_API_URL } = import.meta.env
+type MovieProps = MovieDetails & { isFavorite: boolean | undefined }
 
-type MovieProps = {
-  id: number
-  title: string
-  overview: string
-  posterPath: string
-}
-
-const MovieCard = ({ id, title, overview, posterPath }: MovieProps) => {
+export default function MovieCard({
+  id,
+  title,
+  overview,
+  genresIds,
+  posterPath,
+  releaseDate,
+  isFavorite,
+}: MovieProps) {
   const movieCtx = useContext(MovieContext)
   const navigate = useNavigate()
+  const [cache, setCache] = useState({} as MovieDetails)
 
-  const imgUrl = `${IMG_API_URL}${posterPath}`
+  const loadCachedMovieData = useCallback(async () => {
+    const cacheData = await getCacheData('favorite-movies', `/movie/${id}`)
+
+    cacheData && setCache(cacheData)
+  }, [id])
+
+  useEffect(() => {
+    loadCachedMovieData()
+  }, [loadCachedMovieData])
 
   const handleCardClick = () => {
     navigate(`/movie/${id}`, {
-      state: { details: { title, overview, poster: imgUrl } },
+      state: { hasInfo: true, title, overview, posterPath, releaseDate },
     })
   }
 
-  const handleBtnClick = (e: MouseEvent<HTMLButtonElement>) => {
+  const handleHeartClick = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
-    console.log('favorite button clicked!')
+
     movieCtx.dispatch({
-      type: 'SET-FAVORITES',
-      payload: { id, title, details: { overview, imgUrl } },
+      type: 'UPDATE-FAVORITES',
+      payload: { id, title },
     })
+
+    if (!cache.id) {
+      addDataIntoCache('favorite-movies', `movie/${id}`, {
+        id,
+        title,
+        overview,
+        genresIds,
+        releaseDate,
+        posterPath,
+      })
+    }
   }
 
   return (
-    <Col className="movie-card-container mb-4" xs={6} sm={4} lg={3}>
+    <Col className="movie-card-container mb-4" xs={6} sm={4} lg={2}>
       <Card className="movie-card" onClick={handleCardClick}>
-        <Card.Img variant="top" src={imgUrl} />
+        <Card.Img variant="top" src={getMoviePoster(posterPath)} />
         <Card.Body className="movie-card-body">
-          <Card.Title className="movie-card-title">{title}</Card.Title>
-          <Button className="movie-card-btn" onClick={handleBtnClick}>
+          {/* <Card.Title className="movie-card-title">{title}</Card.Title> */}
+          <button
+            className={
+              isFavorite
+                ? 'btn-mybtn btn-mybtn-primary'
+                : 'btn-mybtn btn-mybtn-primary-outline'
+            }
+            onClick={handleHeartClick}
+          >
             <HeartSvg />
-          </Button>
+          </button>
         </Card.Body>
       </Card>
     </Col>
   )
 }
-
-export default MovieCard

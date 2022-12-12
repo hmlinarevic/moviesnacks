@@ -32,22 +32,24 @@ export const MovieProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(reducer, initalState)
 
   useEffect(() => {
-    const favorites = localStorage.getItem('movie-favorites-ids')
+    const favorites = localStorage.getItem('favorite-movies')
 
     if (favorites) {
       const parsedFavorites = JSON.parse(favorites)
 
       if (parsedFavorites.length) {
-        localStorage.setItem('movie-favorites-ids', `${favorites}`)
-        dispatch({ type: 'SET-FAVORITES', payload: parsedFavorites })
+        console.log('setting favorites to localStorage')
+        localStorage.setItem('favorite-movies', `${favorites}`)
+
+        dispatch({ type: 'UPDATE-FAVORITES', payload: parsedFavorites })
       }
     }
   }, [])
 
   useEffect(() => {
     localStorage.setItem(
-      'movie-favorites-ids',
-      `${JSON.stringify(state.favorites.map((f) => f.id))}`
+      'favorite-movies',
+      `${JSON.stringify(state.favorites)}`
     )
   }, [state.favorites])
 

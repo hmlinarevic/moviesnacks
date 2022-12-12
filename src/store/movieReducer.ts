@@ -4,10 +4,6 @@ import { MovieCollection } from './MoviesContext'
 export type MovieFavorite = {
   id: number
   title: string
-  details: {
-    overview: string
-    imgUrl: string
-  }
 }
 
 type SearchAction = {
@@ -16,12 +12,12 @@ type SearchAction = {
 }
 
 type LoadingAction = {
-  type: 'SET-ISLOADING'
+  type: 'UPDATE-ISLOADING'
   payload: true | false
 }
 
 type FavoritesAction = {
-  type: 'SET-FAVORITES'
+  type: 'UPDATE-FAVORITES'
   payload: MovieFavorite | MovieFavorite[]
 }
 
@@ -34,12 +30,15 @@ export const reducer = (
   state: MovieCollection,
   action: MovieCollectionActions
 ): MovieCollection => {
+  //
   switch (action.type) {
     case 'SEARCH':
       return { ...state, searched: action.payload }
-    case 'SET-ISLOADING':
+    //
+    case 'UPDATE-ISLOADING':
       return { ...state, isLoading: action.payload }
-    case 'SET-FAVORITES':
+    //
+    case 'UPDATE-FAVORITES':
       // single obj
       if (!Array.isArray(action.payload)) {
         const favorite = action.payload
