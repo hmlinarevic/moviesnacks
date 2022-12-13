@@ -1,14 +1,13 @@
-import { useState, useCallback, useContext, MouseEvent, useEffect } from 'react'
+import { useState, useCallback, MouseEvent, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Col, Card, Button } from 'react-bootstrap'
-import { MovieContext } from '../../store/MoviesContext'
+import { Col, Card } from 'react-bootstrap'
 import { addDataIntoCache, getCacheData } from '../../utils/cache'
 import { MovieDetails } from '../../types/APIResponsesTypes'
 import HeartSvg from '../svg/HeartSvg'
-import './MovieCard.css'
 import { getMoviePoster } from '../../utils'
 import { useAppDispatch } from '../../hooks'
 import { favoritesSlice } from '../../store/favoritesSlice'
+import './MovieCard.css'
 
 type MovieProps = MovieDetails & { isFavorite: boolean | undefined }
 
@@ -22,7 +21,6 @@ export default function MovieCard({
   isFavorite,
 }: MovieProps) {
   const dispatch = useAppDispatch()
-  const movieCtx = useContext(MovieContext)
   const navigate = useNavigate()
   const [cache, setCache] = useState({} as MovieDetails)
 
@@ -51,11 +49,6 @@ export default function MovieCard({
 
   const handleHeartClick = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
-
-    movieCtx.dispatch({
-      type: 'UPDATE-FAVORITES',
-      payload: { id, title },
-    })
 
     dispatch(favoritesSlice.actions.update({ id, title }))
 

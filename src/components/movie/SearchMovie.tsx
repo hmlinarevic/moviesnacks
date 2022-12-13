@@ -1,14 +1,12 @@
-import { useState, useEffect, useRef, useContext } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { searchMovies } from '../../api/searchMovies'
-import { MovieContext } from '../../store/MoviesContext'
 import { useAppDispatch } from '../../hooks'
-import './SearchMovie.css'
 import { searchMoviesSlice } from '../../store/searchMoviesSlice'
+import './SearchMovie.css'
 
 const SearchMovie = () => {
   const [query, setQuery] = useState('')
-  const moviesCtx = useContext(MovieContext)
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
 
@@ -40,7 +38,6 @@ const SearchMovie = () => {
       //     moviesCtx.dispatch({ type: 'SEARCH', payload: searchResult.results })
       //   }
       // }
-      moviesCtx.dispatch({ type: 'UPDATE-ISLOADING', payload: false })
     }, 1000)
 
     return () => {
