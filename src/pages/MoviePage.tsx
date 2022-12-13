@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback, useContext } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import { Container, Row, Col, Button } from 'react-bootstrap'
-import { MovieContext } from '../store/MoviesContext'
 import { MovieDetails } from '../types/APIResponsesTypes'
 import { getMoviePoster } from '../utils'
 import { getCacheData } from '../utils/cache'

@@ -1,7 +1,7 @@
 import { isNull } from 'lodash'
 const { VITE_IMG_API_URL: IMG_API_URL } = import.meta.env
 
-export const copyObjectAndTransformPropsToCamelCase = <T>(oldObj: T) => {
+export const copyObjectAndTransformPropsToCamelCase = <T>(oldObj: any) => {
   const newObj = { ...oldObj }
 
   for (const key in newObj) {
@@ -14,12 +14,12 @@ export const copyObjectAndTransformPropsToCamelCase = <T>(oldObj: T) => {
       newObj[key] = recursiveObj
     }
 
-    let newKey = key
+    let newKey: PropertyKey = key
 
     const index = key.indexOf('_')
 
     if (index > -1) {
-      let toUpperCaseIndex
+      let toUpperCaseIndex: number
 
       newKey = key
         .split('')
