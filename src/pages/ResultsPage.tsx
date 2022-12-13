@@ -1,29 +1,16 @@
-import { useContext } from 'react'
 import { Container, Row, Spinner } from 'react-bootstrap'
-import { MovieContext } from '../store/MoviesContext'
 import MovieCard from '../components/movie/MovieCard'
-
-type FavoriteMovieIdsMap = { [id: string]: string }
+import { useAppSelector } from '../hooks'
 
 const ResultsPage = () => {
-  const movieCtx = useContext(MovieContext)
+  const favorites = useAppSelector((state) => state.favorites)
+  const searchMovies = useAppSelector((state) => state.searchMovies)
 
-  let mapOfFavoriteMovieIds: FavoriteMovieIdsMap
-
-  if (movieCtx.favorites.length) {
-    mapOfFavoriteMovieIds = movieCtx.favorites.reduce((obj, favorite) => {
-      obj[favorite.id] = favorite.title
-
-      return obj
-    }, {} as FavoriteMovieIdsMap)
-  }
-
-  const content = movieCtx.searched.map((movie) => {
-    let isFavorite
-
-    if (mapOfFavoriteMovieIds) {
-      isFavorite = Boolean(mapOfFavoriteMovieIds[movie.id])
-    }
+  const content = searchMovies.data.map((movie) => {
+    // find out if movie is favorited
+    const isFavorite = Boolean(
+      favorites.find((movieFavorite) => movieFavorite.id === movie.id)
+    )
 
     if (!movie.posterPath) return null
 
@@ -41,7 +28,7 @@ const ResultsPage = () => {
     )
   })
 
-  if (movieCtx.isLoading) {
+  if (searchMovies.isLoading) {
     return (
       <Container>
         <Row className="d-flex justify-content-center align-items-center">

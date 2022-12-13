@@ -6,12 +6,15 @@ import { MovieDetails } from '../types/APIResponsesTypes'
 import { getMoviePoster } from '../utils'
 import { getCacheData } from '../utils/cache'
 import HeartSvg from '../components/svg/HeartSvg'
+import { useAppDispatch, useAppSelector } from '../hooks'
+import { favoritesSlice } from '../store/favoritesSlice'
 
 export default function MoviePage() {
   const { id } = useParams()
   const { state } = useLocation()
   const [cache, setCache] = useState({} as MovieDetails)
-  const movieCtx = useContext(MovieContext)
+  const favorites = useAppSelector((state) => state.favorites)
+  const dispatch = useAppDispatch()
 
   const loadCachedMovieData = useCallback(async () => {
     const cacheData = await getCacheData('favorite-movies', `/movie/${id}`)
@@ -34,13 +37,17 @@ export default function MoviePage() {
     dataSource = cache
   }
 
-  const isFavorite = movieCtx.favorites.find((movie) => id && movie.id === +id)
+  const isFavorite = favorites.find(
+    (movieFavorite) => movieFavorite.id === dataSource.id
+  )
 
   const handleHeartClick = () => {
-    movieCtx.dispatch({
-      type: 'UPDATE-FAVORITES',
-      payload: { id: +id, title: dataSource.title },
-    })
+    dispatch(
+      favoritesSlice.actions.update({
+        id: dataSource.id,
+        title: dataSource.title,
+      })
+    )
   }
 
   const content = (

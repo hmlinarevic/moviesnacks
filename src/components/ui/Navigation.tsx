@@ -9,30 +9,27 @@ import {
 } from 'react-bootstrap'
 import Logo from '../logo'
 import SearchMovie from '../movie/SearchMovie'
-import { useContext } from 'react'
-import { MovieContext } from '../../store/MoviesContext'
+import { useAppDispatch, useAppSelector } from '../../hooks'
+import { favoritesSlice } from '../../store/favoritesSlice'
 import './Navigation.css'
 
 const Navigation = () => {
-  const movieCtx = useContext(MovieContext)
+  const favorites = useAppSelector((state) => state.favorites)
+  const dispatch = useAppDispatch()
   const navigate = useNavigate()
 
-  const dropDownContent = movieCtx.favorites.map((favoriteMovie) => {
-    if (favoriteMovie) {
-      return (
-        <Link
-          key={favoriteMovie.id}
-          className="dropdown-item"
-          to={`movie/${favoriteMovie.id}`}
-        >
-          {favoriteMovie.title}
-        </Link>
-      )
-    }
-  })
+  const dropDownContent = favorites.map((favoriteMovie) => (
+    <Link
+      key={favoriteMovie.id}
+      className="dropdown-item"
+      to={`movie/${favoriteMovie.id}`}
+    >
+      {favoriteMovie.title}
+    </Link>
+  ))
 
   const handleClearFavorites = () => {
-    movieCtx.dispatch({ type: 'UPDATE-FAVORITES', payload: [] })
+    dispatch(favoritesSlice.actions.clear())
   }
 
   return (

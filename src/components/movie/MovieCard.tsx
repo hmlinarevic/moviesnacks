@@ -7,6 +7,8 @@ import { MovieDetails } from '../../types/APIResponsesTypes'
 import HeartSvg from '../svg/HeartSvg'
 import './MovieCard.css'
 import { getMoviePoster } from '../../utils'
+import { useAppDispatch } from '../../hooks'
+import { favoritesSlice } from '../../store/favoritesSlice'
 
 type MovieProps = MovieDetails & { isFavorite: boolean | undefined }
 
@@ -19,6 +21,7 @@ export default function MovieCard({
   releaseDate,
   isFavorite,
 }: MovieProps) {
+  const dispatch = useAppDispatch()
   const movieCtx = useContext(MovieContext)
   const navigate = useNavigate()
   const [cache, setCache] = useState({} as MovieDetails)
@@ -35,7 +38,14 @@ export default function MovieCard({
 
   const handleCardClick = () => {
     navigate(`/movie/${id}`, {
-      state: { hasInfo: true, title, overview, posterPath, releaseDate },
+      state: {
+        hasInfo: true,
+        id,
+        title,
+        overview,
+        posterPath,
+        releaseDate,
+      },
     })
   }
 
@@ -46,6 +56,8 @@ export default function MovieCard({
       type: 'UPDATE-FAVORITES',
       payload: { id, title },
     })
+
+    dispatch(favoritesSlice.actions.update({ id, title }))
 
     if (!cache.id) {
       addDataIntoCache('favorite-movies', `movie/${id}`, {

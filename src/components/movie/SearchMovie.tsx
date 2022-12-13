@@ -2,11 +2,14 @@ import { useState, useEffect, useRef, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { searchMovies } from '../../api/searchMovies'
 import { MovieContext } from '../../store/MoviesContext'
+import { useAppDispatch } from '../../hooks'
 import './SearchMovie.css'
+import { searchMoviesSlice } from '../../store/searchMoviesSlice'
 
 const SearchMovie = () => {
   const [query, setQuery] = useState('')
   const moviesCtx = useContext(MovieContext)
+  const dispatch = useAppDispatch()
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -15,7 +18,6 @@ const SearchMovie = () => {
     const id = setTimeout(async () => {
       console.log('searching movies...', query)
 
-      moviesCtx.dispatch({ type: 'UPDATE-ISLOADING', payload: true })
       navigate('/results')
 
       const searchResult = await searchMovies(query)
@@ -23,19 +25,21 @@ const SearchMovie = () => {
       // cached data
       if (Array.isArray(searchResult)) {
         console.log('dispatching action', searchResult)
-        moviesCtx.dispatch({ type: 'SEARCH', payload: searchResult })
+
+        dispatch(searchMoviesSlice.actions.addResults(searchResult))
+        dispatch(searchMoviesSlice.actions.setIsLoading(false))
       }
       // api response
-      else {
-        console.log('received back api response but no data')
+      // else {
+      //   console.log('received back api response but no data')
 
-        if (searchResult.success === false) {
-          moviesCtx.dispatch({ type: 'SEARCH', payload: [] })
-        }
-        if (searchResult.results) {
-          moviesCtx.dispatch({ type: 'SEARCH', payload: searchResult.results })
-        }
-      }
+      //   if (searchResult.success === false) {
+      //     moviesCtx.dispatch({ type: 'SEARCH', payload: [] })
+      //   }
+      //   if (searchResult.results) {
+      //     moviesCtx.dispatch({ type: 'SEARCH', payload: searchResult.results })
+      //   }
+      // }
       moviesCtx.dispatch({ type: 'UPDATE-ISLOADING', payload: false })
     }, 1000)
 
