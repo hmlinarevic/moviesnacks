@@ -1,6 +1,6 @@
 import { Container, Row, Spinner } from 'react-bootstrap'
-import MovieCard from '../components/movie/MovieCard'
 import { useAppSelector } from '../hooks'
+import MovieCard from '../components/movie/MovieCard'
 
 const ResultsPage = () => {
   const favorites = useAppSelector((state) => state.favorites)
