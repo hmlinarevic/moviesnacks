@@ -8,7 +8,7 @@ import {
   Offcanvas,
 } from 'react-bootstrap'
 import Logo from '../logo'
-import SearchMovie from '../movie/SearchMovie'
+import MovieSearch from '../movie/MovieSearch'
 import { useAppDispatch, useAppSelector } from '../../hooks'
 import { favoritesSlice } from '../../store/favoritesSlice'
 import './Navigation.css'
@@ -74,7 +74,7 @@ const Navigation = () => {
               </NavDropdown>
             </Nav>
             <Form className="d-flex" onSubmit={(e) => e.preventDefault()}>
-              <SearchMovie />
+              <MovieSearch />
             </Form>
           </Offcanvas.Body>
         </Navbar.Offcanvas>
