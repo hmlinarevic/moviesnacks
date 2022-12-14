@@ -3,49 +3,39 @@ import { useNavigate } from 'react-router-dom'
 import { searchMovies } from '../../api/searchMovies'
 import { useAppDispatch } from '../../hooks'
 import { searchMoviesSlice } from '../../store/searchMoviesSlice'
-import './SearchMovie.css'
+import './MovieSearch.css'
 
-const SearchMovie = () => {
-  const [query, setQuery] = useState('')
+const MovieSearch = () => {
+  const [searchTerm, setSearchTerm] = useState('')
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
 
+  const search = async () => {
+    navigate('/results')
+
+    const searchResult = await searchMovies(searchTerm)
+
+    if (!searchResult) {
+      dispatch(searchMoviesSlice.actions.addResults([]))
+    } else {
+      console.log({ searchResult })
+      dispatch(searchMoviesSlice.actions.addResults(searchResult))
+    }
+    dispatch(searchMoviesSlice.actions.setIsLoading(false))
+  }
+
   useEffect(() => {
-    if (!query) return
+    if (!searchTerm) return
 
-    const id = setTimeout(async () => {
-      console.log('searching movies...', query)
-
-      navigate('/results')
-
-      const searchResult = await searchMovies(query)
-
-      // cached data
-      if (Array.isArray(searchResult)) {
-        console.log('dispatching action', searchResult)
-
-        dispatch(searchMoviesSlice.actions.addResults(searchResult))
-        dispatch(searchMoviesSlice.actions.setIsLoading(false))
-      }
-      // api response
-      // else {
-      //   console.log('received back api response but no data')
-
-      //   if (searchResult.success === false) {
-      //     moviesCtx.dispatch({ type: 'SEARCH', payload: [] })
-      //   }
-      //   if (searchResult.results) {
-      //     moviesCtx.dispatch({ type: 'SEARCH', payload: searchResult.results })
-      //   }
-      // }
-    }, 1000)
+    const timeoutID = setTimeout(search, 1000)
 
     return () => {
-      clearTimeout(id)
+      clearTimeout(timeoutID)
     }
+
     // [navigate]
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query])
+  }, [searchTerm])
 
   return (
     <>
@@ -54,10 +44,11 @@ const SearchMovie = () => {
         placeholder="Search movies"
         className="form-control search me-2"
         aria-label="Search movies"
-        onChange={(e) => setQuery(e.target.value)}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        onSubmit={() => console.log('search submited')}
       />
     </>
   )
 }
 
-export default SearchMovie
+export default MovieSearch
