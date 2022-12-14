@@ -1,7 +1,7 @@
 import { useState, useCallback, MouseEvent, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Col, Card } from 'react-bootstrap'
-import { addDataIntoCache, getCacheData } from '../../utils/cache'
+import { addDataIntoCache, getCachedMovieDetails } from '../../utils/cache'
 import { MovieDetails } from '../../types/APIResponsesTypes'
 import HeartSvg from '../svg/HeartSvg'
 import { getMoviePoster } from '../../utils'
@@ -22,22 +22,22 @@ export default function MovieCard({
 }: MovieProps) {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
-  const [cache, setCache] = useState({} as MovieDetails)
 
-  const loadCachedMovieData = useCallback(async () => {
-    const cacheData = await getCacheData('favorite-movies', `/movie/${id}`)
+  const [cacheData, setCacheData] = useState({} as MovieDetails)
 
-    cacheData && setCache(cacheData)
+  const loadCachedMovieDetails = useCallback(async () => {
+    const cacheResponse = await getCachedMovieDetails(`/movie/${id}`)
+
+    cacheResponse && setCacheData(cacheResponse)
   }, [id])
 
   useEffect(() => {
-    loadCachedMovieData()
-  }, [loadCachedMovieData])
+    loadCachedMovieDetails()
+  }, [loadCachedMovieDetails])
 
   const handleCardClick = () => {
     navigate(`/movie/${id}`, {
       state: {
-        hasInfo: true,
         id,
         title,
         overview,
@@ -51,9 +51,10 @@ export default function MovieCard({
     e.stopPropagation()
 
     dispatch(favoritesSlice.actions.update({ id, title }))
+    console.log({ cacheData })
 
-    if (!cache.id) {
-      addDataIntoCache('favorite-movies', `movie/${id}`, {
+    if (!cacheData.id) {
+      addDataIntoCache('movie-data', `movie/${id}`, {
         id,
         title,
         overview,
