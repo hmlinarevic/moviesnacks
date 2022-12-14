@@ -3,51 +3,48 @@ import { useLocation, useParams } from 'react-router-dom'
 import { Container, Row, Col, Button } from 'react-bootstrap'
 import { MovieDetails } from '../types/APIResponsesTypes'
 import { getMoviePoster } from '../utils'
-import { getCacheData } from '../utils/cache'
+import { getCacheData, getCachedMovieDetails } from '../utils/cache'
 import HeartSvg from '../components/svg/HeartSvg'
 import { useAppDispatch, useAppSelector } from '../hooks'
 import { favoritesSlice } from '../store/favoritesSlice'
 
-export default function MoviePage() {
+const MoviePage = () => {
   const { id } = useParams()
-  const { state } = useLocation()
-  const [cache, setCache] = useState({} as MovieDetails)
+  const { state: routerState } = useLocation()
+  const [cachedData, setCachedData] = useState({} as MovieDetails)
   const favorites = useAppSelector((state) => state.favorites)
   const dispatch = useAppDispatch()
 
   const loadCachedMovieData = useCallback(async () => {
-    const cacheData = await getCacheData('favorite-movies', `/movie/${id}`)
+    const cacheResponse = await getCachedMovieDetails(`/movie/${id}`)
+    console.log({ cacheResponse })
 
-    cacheData && setCache(cacheData)
+    cacheResponse && setCachedData(cacheResponse)
   }, [id])
 
-  useEffect(() => {
-    loadCachedMovieData()
-  }, [loadCachedMovieData])
+  console.log({ cachedData })
 
   let dataSource: MovieDetails
 
-  // data passed through react router navigate state
-  if (state && state.hasInfo) {
-    dataSource = state
+  // data loaded from react router's useNavigate hook
+  if (routerState) {
+    dataSource = routerState
   }
-  // data loaded and passed from cache
+  // data loaded from cache
   else {
-    dataSource = cache
+    dataSource = cachedData
   }
 
   const isFavorite = favorites.find(
     (movieFavorite) => movieFavorite.id === dataSource.id
   )
 
-  const handleHeartClick = () => {
-    dispatch(
-      favoritesSlice.actions.update({
-        id: dataSource.id,
-        title: dataSource.title,
-      })
-    )
-  }
+  useEffect(() => {
+    if (dataSource === cachedData) {
+      loadCachedMovieData()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const content = (
     <>
@@ -67,7 +64,14 @@ export default function MoviePage() {
               ? 'btn-mybtn btn-mybtn-primary'
               : 'btn-mybtn btn-mybtn-primary-outline'
           }
-          onClick={handleHeartClick}
+          onClick={() => {
+            dispatch(
+              favoritesSlice.actions.update({
+                id: dataSource.id,
+                title: dataSource.title,
+              })
+            )
+          }}
         >
           <span style={{ marginRight: '.25rem' }}>favorite</span>
 
@@ -83,3 +87,5 @@ export default function MoviePage() {
     </Container>
   )
 }
+
+export default MoviePage
