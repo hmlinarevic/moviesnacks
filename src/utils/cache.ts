@@ -36,7 +36,7 @@ export const getCachedMovieDetails = async (
 export const getCacheData = async (
   cacheName: string,
   url: string
-): Promise<MovieDetails | MovieDetails[] | undefined> => {
+): Promise<MovieDetails[] | undefined> => {
   try {
     const cache = await caches.open(cacheName)
     const res = await cache.match(url)
