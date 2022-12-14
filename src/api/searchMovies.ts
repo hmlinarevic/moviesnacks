@@ -1,28 +1,26 @@
-import { API_KEY, API_URL, handleApiCall } from '.'
-import { MovieDetails } from '../types/APIResponsesTypes'
-import { adaptDataPropsToCamelCase } from '../utils'
+import camelcaseKeys from 'camelcase-keys'
+import { makeSearchUrl, getApiData } from '.'
 import { addDataIntoCache, getCacheData } from '../utils/cache'
+import { MovieDetails } from '../types/APIResponsesTypes'
 
-const params = `language=en-US&page=1&include_adult=false`
+export const searchMovies = async (searchTerm: string) => {
+  const url = makeSearchUrl(searchTerm)
 
-export async function searchMovies(movie: string) {
-  const url = `${API_URL}/search/movie?api_key=${API_KEY}&${params}&query=${movie}`
-  console.log(url)
+  let dataSource: MovieDetails[] | undefined
 
-  const cacheData = await getCacheData('searchCache', url)
+  const cacheResponse = await getCacheData('search-cache', url)
 
-  if (cacheData) {
-    console.log('data found in cache:', cacheData)
-    console.log('data send from cache')
-    return adaptDataPropsToCamelCase(cacheData)
+  if (cacheResponse) {
+    dataSource = cacheResponse
   } else {
-    // const data = await handleApiCall(url)
-    // if (data.results.length) {
-    //   const adaptedData = adaptDataPropsToCamelCase(data.results)
-    //   console.log({ adaptedData, oldData: data.results })
-    //   console.log({ hadnleApiCallResonse: data })
-    //   addDataIntoCache('searchCache', url, data.results)
-    // }
-    // return data
+    const apiResponse = await getApiData(url)
+
+    if (apiResponse.results.length) {
+      dataSource = camelcaseKeys(apiResponse.results)
+
+      addDataIntoCache('search-cache', url, dataSource)
+    }
   }
+
+  return dataSource
 }
