@@ -5,6 +5,7 @@ export const addDataIntoCache = (
   url: string,
   response: MovieDetails | MovieDetails[]
 ) => {
+  console.log('call to add data into cache')
   // Converting our response into Actual Response form
   const data = new Response(JSON.stringify(response))
   if ('caches' in window) {
@@ -16,38 +17,26 @@ export const addDataIntoCache = (
   }
 }
 
-// export const getAllCacheData = async (
-//   cacheToFind: string,
-//   url: string
-// ): Promise<MovieDetails[] | void> => {
-//   const names = await caches.keys()
-//   const name = names.find((name) => name === cacheToFind)
+export const getCachedMovieDetails = async (
+  url: string,
+  cacheName = 'movie-data'
+): Promise<MovieDetails | undefined> => {
+  try {
+    const cache = await caches.open(cacheName)
+    const res = await cache.match(url)
 
-//   console.log({ name })
-
-//   if (!name) return
-
-//   const cacheDataArray: MovieDetails[] = []
-
-//   // Opening particular cache
-//   const cacheStorage = await caches.open(name)
-//   console.log({ cacheStorage })
-//   // Fetching from particular cache data
-//   const cachedResponse = await cacheStorage.match(url)
-//   console.log({ cachedResponse })
-//   // Cached data not found
-//   if (cachedResponse === undefined) return
-//   // Pushing fetched data into our cacheDataArray
-//   const data = await cachedResponse.json()
-//   cacheDataArray.push(...data)
-
-//   return cacheDataArray
-// }
+    if (res?.ok) {
+      return await res.json()
+    }
+  } catch (error) {
+    console.log(error)
+  }
+}
 
 export const getCacheData = async (
   cacheName: string,
   url: string
-): Promise<MovieDetails | undefined> => {
+): Promise<MovieDetails | MovieDetails[] | undefined> => {
   try {
     const cache = await caches.open(cacheName)
     const res = await cache.match(url)
