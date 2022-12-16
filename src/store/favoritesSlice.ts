@@ -23,8 +23,10 @@ export const favoritesSlice = createSlice({
         )
       }
     },
-    clear: () => {
-      return []
-    },
+    clear: () => [],
   },
 })
+
+export const { update, clear } = favoritesSlice.actions
+
+export default favoritesSlice.reducer
