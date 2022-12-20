@@ -1,28 +1,25 @@
-import { useState, useEffect, useCallback, useContext } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
-import { Container, Row, Col, Button } from 'react-bootstrap'
+import { Container, Row, Col } from 'react-bootstrap'
 import { MovieDetails } from '../types/APIResponsesTypes'
 import { getMoviePoster } from '../utils'
-import { getCacheData, getCachedMovieDetails } from '../utils/cache'
+import { getCachedMovieDetails } from '../utils/cache'
 import HeartSvg from '../components/svg/HeartSvg'
 import { useAppDispatch, useAppSelector } from '../hooks'
-import { favoritesSlice } from '../store/favoritesSlice'
+import { update } from '../store/movieFavoritesSlice'
 
 const MoviePage = () => {
   const { id } = useParams()
   const { state: routerState } = useLocation()
   const [cachedData, setCachedData] = useState({} as MovieDetails)
-  const favorites = useAppSelector((state) => state.favorites)
+  const favorites = useAppSelector((state) => state.movieFavorites)
   const dispatch = useAppDispatch()
 
   const loadCachedMovieData = useCallback(async () => {
     const cacheResponse = await getCachedMovieDetails(`/movie/${id}`)
-    console.log({ cacheResponse })
 
     cacheResponse && setCachedData(cacheResponse)
   }, [id])
-
-  console.log({ cachedData })
 
   let dataSource: MovieDetails
 
@@ -66,7 +63,7 @@ const MoviePage = () => {
           }
           onClick={() => {
             dispatch(
-              favoritesSlice.actions.update({
+              update({
                 id: dataSource.id,
                 title: dataSource.title,
               })
