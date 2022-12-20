@@ -8,6 +8,7 @@ import { useAppDispatch } from '../../hooks'
 import { update } from '../../store/movieFavoritesSlice'
 import HeartSvg from '../svg/HeartSvg'
 import './MovieCard.css'
+import BookmarkSvg from '../svg/BookmarkSvg'
 
 type MovieProps = MovieDetails & { isFavorite: boolean | undefined }
 
@@ -68,22 +69,16 @@ const MovieCard = ({
     <Col className="movie-card-container mb-4" xs={6} sm={4} lg={2}>
       <Card className="movie-card" onClick={handleCardClick}>
         <Card.Img variant="top" src={getMoviePoster(posterPath)} />
-        {/* <Card.Body className="movie-card-body"> */}
-        {/* <Card.Title className="movie-card-title">{title}</Card.Title> */}
-        <button className="movie-card-btn-test" onClick={handleHeartClick}>
-          <HeartSvg />
+        <button
+          className={
+            isFavorite
+              ? 'movie-card-btn-bookmark movie-card-btn-bookmark-clicked'
+              : 'movie-card-btn-bookmark'
+          }
+          onClick={handleHeartClick}
+        >
+          <BookmarkSvg />
         </button>
-        {/* <button
-            className={
-              isFavorite
-                ? 'btn-mybtn btn-mybtn-primary'
-                : 'btn-mybtn btn-mybtn-primary-outline'
-            }
-            onClick={handleHeartClick}
-          >
-            <HeartSvg />
-          </button> */}
-        {/* </Card.Body> */}
       </Card>
     </Col>
   )
