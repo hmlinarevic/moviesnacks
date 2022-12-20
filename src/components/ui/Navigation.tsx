@@ -10,26 +10,22 @@ import {
 import Logo from '../logo'
 import MovieSearch from '../movie/MovieSearch'
 import { useAppDispatch, useAppSelector } from '../../hooks'
-import { favoritesSlice } from '../../store/favoritesSlice'
+import { clear } from '../../store/movieFavoritesSlice'
 import './Navigation.css'
 
 const Navigation = () => {
-  const favorites = useAppSelector((state) => state.favorites)
+  const favorites = useAppSelector((state) => state.movieFavorites)
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
 
-  const dropDownContent = favorites.map((favoriteMovie) => (
-    <Link
-      key={favoriteMovie.id}
-      className="dropdown-item"
-      to={`movie/${favoriteMovie.id}`}
-    >
-      {favoriteMovie.title}
+  const dropDownContent = favorites.map((movie) => (
+    <Link key={movie.id} className="dropdown-item" to={`movie/${movie.id}`}>
+      {movie.title}
     </Link>
   ))
 
   const handleClearFavorites = () => {
-    dispatch(favoritesSlice.actions.clear())
+    dispatch(clear())
   }
 
   return (
