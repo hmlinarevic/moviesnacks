@@ -1,23 +1,41 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import camelcaseKeys from 'camelcase-keys'
-import { getApiData, makeDiscoverUrl } from '../utils/api'
+import { getApiData, getApiEndpoint } from '../utils/api'
 import { MovieDetails } from '../types/APIResponsesTypes'
 
 interface movieDiscoveryState {
-  movies: [] | MovieDetails[]
-  isLoading: true | false
+  popular: {
+    data: [] | MovieDetails[]
+    isLoading: true | false
+  }
+  nowPlaying: {
+    data: [] | MovieDetails[]
+    isLoading: true | false
+  }
 }
 
 const initialState: movieDiscoveryState = {
-  movies: [],
-  isLoading: true,
+  popular: { data: [], isLoading: true },
+  nowPlaying: { data: [], isLoading: true },
 }
 
-export const discover = createAsyncThunk(
-  'movieDiscovery/discover',
+export const discoverNowPlaying = createAsyncThunk(
+  'movieDiscovery/discoverNowPlaying',
   async () => {
-    const url = makeDiscoverUrl()
-    const response = await getApiData(url)
+    const endpoint = getApiEndpoint('now_playing')
+    const response = await getApiData(endpoint)
+
+    if (response && response.results.length) {
+      return response.results
+    }
+  }
+)
+
+export const discoverPopular = createAsyncThunk(
+  'movieDiscovery/discoverPopular',
+  async () => {
+    const endpoint = getApiEndpoint('popular')
+    const response = await getApiData(endpoint)
 
     if (response && response.results.length) {
       return response.results
@@ -30,13 +48,16 @@ export const movieDiscoverySlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(discover.pending, (state) => {
-      state.isLoading = true
-    })
-    builder.addCase(discover.fulfilled, (state, action) => {
+    builder.addCase(discoverPopular.fulfilled, (state, action) => {
       if (action.payload) {
-        state.movies = camelcaseKeys(action.payload)
-        state.isLoading = false
+        state.popular.data = camelcaseKeys(action.payload)
+        state.popular.isLoading = false
+      }
+    })
+    builder.addCase(discoverNowPlaying.fulfilled, (state, action) => {
+      if (action.payload) {
+        state.nowPlaying.data = camelcaseKeys(action.payload)
+        state.nowPlaying.isLoading = false
       }
     })
   },
