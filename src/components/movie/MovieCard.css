@@ -1,8 +1,10 @@
 .movie-card-container {
-  height: 370px;
+  height: 340px;
+  overflow: hidden;
 }
 
 .movie-card {
+  position: relative;
   height: 100%;
   background-color: #000;
   color: white;
@@ -12,8 +14,8 @@
 }
 
 .movie-card:hover {
-  border-color: var(--purple);
-  transform: scale(1.02);
+  /* border-color: var(--purple); */
+  /* transform: scale(1.02); */
 }
 
 .movie-card img {
@@ -41,6 +43,34 @@
   transition: 150ms background-color;
 }
 
+.movie-card-btn-bookmark {
+  position: absolute;
+  top: -8px;
+  right: 0;
+  background-color: transparent;
+  color: rgba(255, 255, 255, 0.75);
+  border: none;
+  padding: 0;
+}
+
+.movie-card-btn-bookmark svg {
+  width: 38px;
+  stroke: none;
+  fill: rgba(255, 255, 255, 0.2);
+}
+
+.movie-card-btn-bookmark-clicked svg {
+  fill: var(--purple);
+}
+
+.movie-card-btn-bookmark svg:hover {
+  fill: var(--purple);
+}
+
+.movie-card-btn-test:hover {
+  color: var(--purple);
+}
+
 .movie-card-btn-favorite {
   background-color: orange;
 }
@@ -64,6 +94,6 @@
 
 @media (min-width: 1200px) and (max-width: 1400px) {
   .movie-card-container {
-    height: 320px;
+    height: 280px;
   }
 }

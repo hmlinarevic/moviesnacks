@@ -3,15 +3,16 @@ import { useNavigate } from 'react-router-dom'
 import { Col, Card } from 'react-bootstrap'
 import { addDataIntoCache, getCachedMovieDetails } from '../../utils/cache'
 import { MovieDetails } from '../../types/APIResponsesTypes'
-import HeartSvg from '../svg/HeartSvg'
 import { getMoviePoster } from '../../utils'
 import { useAppDispatch } from '../../hooks'
-import { favoritesSlice } from '../../store/favoritesSlice'
+import { update } from '../../store/movieFavoritesSlice'
+import HeartSvg from '../svg/HeartSvg'
 import './MovieCard.css'
+import BookmarkSvg from '../svg/BookmarkSvg'
 
 type MovieProps = MovieDetails & { isFavorite: boolean | undefined }
 
-export default function MovieCard({
+const MovieCard = ({
   id,
   title,
   overview,
@@ -19,7 +20,7 @@ export default function MovieCard({
   posterPath,
   releaseDate,
   isFavorite,
-}: MovieProps) {
+}: MovieProps) => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
 
@@ -50,8 +51,7 @@ export default function MovieCard({
   const handleHeartClick = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
 
-    dispatch(favoritesSlice.actions.update({ id, title }))
-    console.log({ cacheData })
+    dispatch(update({ id, title }))
 
     if (!cacheData.id) {
       addDataIntoCache('movie-data', `movie/${id}`, {
@@ -69,20 +69,19 @@ export default function MovieCard({
     <Col className="movie-card-container mb-4" xs={6} sm={4} lg={2}>
       <Card className="movie-card" onClick={handleCardClick}>
         <Card.Img variant="top" src={getMoviePoster(posterPath)} />
-        <Card.Body className="movie-card-body">
-          {/* <Card.Title className="movie-card-title">{title}</Card.Title> */}
-          <button
-            className={
-              isFavorite
-                ? 'btn-mybtn btn-mybtn-primary'
-                : 'btn-mybtn btn-mybtn-primary-outline'
-            }
-            onClick={handleHeartClick}
-          >
-            <HeartSvg />
-          </button>
-        </Card.Body>
+        <button
+          className={
+            isFavorite
+              ? 'movie-card-btn-bookmark movie-card-btn-bookmark-clicked'
+              : 'movie-card-btn-bookmark'
+          }
+          onClick={handleHeartClick}
+        >
+          <BookmarkSvg />
+        </button>
       </Card>
     </Col>
   )
 }
+
+export default MovieCard

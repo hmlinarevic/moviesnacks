@@ -3,13 +3,13 @@ import { useAppSelector } from '../hooks'
 import MovieCard from '../components/movie/MovieCard'
 
 const ResultsPage = () => {
-  const favorites = useAppSelector((state) => state.favorites)
-  const searchMovies = useAppSelector((state) => state.searchMovies)
+  const favorites = useAppSelector((state) => state.movieFavorites)
+  const searched = useAppSelector((state) => state.movieSearch)
 
-  const content = searchMovies.data.map((movie) => {
+  const content = searched.data.map((movie) => {
     // find out if movie is favorited
     const isFavorite = Boolean(
-      favorites.find((movieFavorite) => movieFavorite.id === movie.id)
+      favorites.find((favoritedMovie) => favoritedMovie.id === movie.id)
     )
 
     if (!movie.posterPath) return null
@@ -28,7 +28,7 @@ const ResultsPage = () => {
     )
   })
 
-  if (searchMovies.isLoading) {
+  if (searched.isLoading) {
     return (
       <Container>
         <Row className="d-flex justify-content-center align-items-center">
