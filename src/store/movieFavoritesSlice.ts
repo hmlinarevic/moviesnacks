@@ -7,8 +7,8 @@ export type MovieFavorite = {
 
 const initialState: MovieFavorite[] = []
 
-export const favoritesSlice = createSlice({
-  name: 'favorites',
+export const movieFavoritesSlice = createSlice({
+  name: 'movieFavorites',
   initialState,
   reducers: {
     update: (state, action) => {
@@ -27,6 +27,6 @@ export const favoritesSlice = createSlice({
   },
 })
 
-export const { update, clear } = favoritesSlice.actions
+export const { update, clear } = movieFavoritesSlice.actions
 
-export default favoritesSlice.reducer
+export default movieFavoritesSlice.reducer

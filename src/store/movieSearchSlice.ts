@@ -20,7 +20,6 @@ export const search = createAsyncThunk(
     const url = makeSearchUrl(searchTerm)
 
     const cacheResponse = await getCacheData('search-cache', url)
-    console.log({ cacheResponse })
     if (cacheResponse) return cacheResponse
     else {
       const apiResponse = await getApiData(url)
