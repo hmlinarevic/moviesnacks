@@ -3,20 +3,19 @@ import { useNavigate } from 'react-router-dom'
 import { Col, Card } from 'react-bootstrap'
 import { addDataIntoCache, getCachedMovieDetails } from '../../utils/cache'
 import { MovieDetails } from '../../types/APIResponsesTypes'
-import { getMoviePoster } from '../../utils'
 import { useAppDispatch } from '../../hooks'
 import { update } from '../../store/movieFavoritesSlice'
-import HeartSvg from '../svg/HeartSvg'
-import './MovieCard.css'
 import BookmarkSvg from '../svg/BookmarkSvg'
+import { getMoviePoster } from '../../utils/movie'
+import './MovieCard.css'
 
-type MovieProps = MovieDetails & { isFavorite: boolean | undefined }
+export type MovieProps = MovieDetails & { isFavorite: boolean | undefined }
 
 const MovieCard = ({
   id,
   title,
   overview,
-  genresIds,
+  genreIds,
   posterPath,
   releaseDate,
   isFavorite,
@@ -58,7 +57,7 @@ const MovieCard = ({
         id,
         title,
         overview,
-        genresIds,
+        genreIds,
         releaseDate,
         posterPath,
       })
