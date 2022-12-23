@@ -15,7 +15,7 @@ export const getQueryString = (path: string, params?: QueryParams): string => {
     page: `page=${params?.page || 1}`,
   } as QueryParams
 
-  if (path !== '/search/movies') {
+  if (path === '/search/movies') {
     defaults.includeAdult = 'include_adult=false'
   }
 
