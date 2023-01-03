@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import {
   Container,
   Form,
@@ -10,22 +10,27 @@ import {
 import Logo from '../logo'
 import MovieSearch from '../movie/MovieSearch'
 import { useAppDispatch, useAppSelector } from '../../hooks'
-import { clear } from '../../store/movieFavoritesSlice'
+import { clearFavoriteMovies } from '../../store/favoritesSlice'
 import './Navigation.css'
 
 const Navigation = () => {
-  const favorites = useAppSelector((state) => state.movieFavorites)
+  const favoriteMovies = useAppSelector((state) => state.favorites.movies)
+  const location = useLocation()
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
 
-  const dropDownContent = favorites.map((movie) => (
+  const dropDownContent = favoriteMovies.map((movie) => (
     <Link key={movie.id} className="dropdown-item" to={`movie/${movie.id}`}>
       {movie.title}
     </Link>
   ))
 
   const handleClearFavorites = () => {
-    dispatch(clear())
+    dispatch(clearFavoriteMovies())
+
+    if (location.pathname === '/results') {
+      navigate('/')
+    }
   }
 
   return (
