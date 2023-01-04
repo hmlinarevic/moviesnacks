@@ -16,8 +16,10 @@ export const searchMovies = createAsyncThunk(
       endpoint
     )
 
-    if (cacheResponse) return cacheResponse
-    else {
+    if (cacheResponse) {
+      console.log('returned from cache ', { cacheResponse })
+      return cacheResponse
+    } else {
       const apiResponse = await getApiData(endpoint)
       if (apiResponse?.results.length) {
         const adapted = camelcaseKeys(apiResponse.results)
@@ -55,6 +57,8 @@ export const fetchMovieGenres = createAsyncThunk(
 export const fetchPopularMovies = createAsyncThunk(
   'movies/fetchPopular',
   async (pages: number, { getState }) => {
+    console.log('fetching popular movies...', { pages })
+
     let results: MovieDetails[] = []
     let endpoint
 
@@ -65,33 +69,43 @@ export const fetchPopularMovies = createAsyncThunk(
         'discover-movies',
         endpoint
       )
-      if (cacheResponse) return cacheResponse
-      else {
+      console.log({ endpoint })
+
+      if (cacheResponse) {
+        results.push(...cacheResponse)
+      } else {
         const apiResponse = await getApiData(endpoint)
         if (apiResponse?.results.length) {
           const adaptedResponse = camelcaseKeys(apiResponse.results)
 
           results = results.concat(adaptedResponse)
+
+          const state = getState() as RootState
+
+          // add genres property to each movieDetail by mapping over genreIds
+          /* (e.g. result)
+            {
+              ...MovieDetails,
+              genreIDs: [13, 54, 23] --> genres: ['Fantasy, Thriller, Mystery']
+            }
+          */
+          results.forEach((movieDetails) => {
+            movieDetails.genres = movieDetails.genreIds.map(
+              (detailsGenreId) => {
+                const genre = state.movies.genres.find(
+                  (genre) => genre.id === detailsGenreId
+                )
+
+                if (genre) return genre.name
+                else return ''
+              }
+            )
+          })
+
+          endpoint && addDataIntoCache('discover-movies', endpoint, results)
         }
       }
     }
-
-    // add genres property to each movieDetail by mapping over genreIds
-    // (e.g.) { ...MovieDetails, genres: ['Fantasy, Thriller, Mystery'] }
-    const state = getState() as RootState
-
-    results.forEach((movieDetails) => {
-      movieDetails.genres = movieDetails.genreIds.map((detailsGenreId) => {
-        const genre = state.movies.genres.find(
-          (genre) => genre.id === detailsGenreId
-        )
-
-        if (genre) return genre.name
-        else return ''
-      })
-    })
-
-    endpoint && addDataIntoCache('discover-movies', endpoint, results)
 
     return results
   }
