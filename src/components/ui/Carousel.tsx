@@ -1,83 +1,70 @@
-import { Container } from 'react-bootstrap'
-import { useState, useRef, useLayoutEffect, useEffect } from 'react'
+import { Navigation, A11y } from 'swiper'
+
+import { Swiper, SwiperSlide, useSwiper } from 'swiper/react'
 import { nanoid } from 'nanoid'
 
-interface Props<U> {
-  heading?: string
+import 'swiper/css'
+import 'swiper/css/navigation'
+
+type Props<U> = {
   items: U[]
-  size?: number
   component: React.ElementType
+  id: string
+}
+
+interface Cache {
+  [k: string]: any
+}
+
+// remember carousel slide position
+const cache: Cache = {
+  init(id: string) {
+    this.id = id
+
+    this[id] = {
+      activeIndex: 0,
+    }
+  },
+  getIndex(id: string) {
+    return this[id].activeIndex
+  },
+  setIndex(id: string, index: number) {
+    this[id].activeIndex = index
+  },
 }
 
 export default function Carousel<T>({
-  heading,
+  id,
   items,
   component: Component,
 }: Props<T>) {
-  const [transformValue, setTransformValue] = useState(0)
-  const [carouselWidth, setCarouselWidth] = useState<number | undefined>(0)
-  const carouselRef = useRef<HTMLDivElement | null>(null)
-  const displayRef = useRef<HTMLDivElement | null>(null)
+  const content = items.map((item) => {
+    return <Component key={nanoid()} {...item} />
+  })
 
-  const carouselStyle = {
-    transform: `translateX(${transformValue}px)`,
+  if (!cache[id]) {
+    cache.init(id)
   }
 
-  console.log({ carouselWidth, transformValue })
-
-  // if (carouselWidth) {
-  //   const numOfItems = Math.round(carouselWidth / 156)
-  //   console.log({ numOfItems })
-  // }
-  useEffect(() => {
-    // set initally
-    setCarouselWidth(carouselRef.current?.clientWidth)
-
-    const handleWindowResize = () => {
-      setCarouselWidth(() => carouselRef.current?.clientWidth)
-    }
-
-    window.addEventListener('resize', handleWindowResize)
-
-    return () => {
-      window.removeEventListener('resize', handleWindowResize)
-    }
-  }, [])
-
   return (
-    <Container>
-      <h3>{heading}</h3>
+    <Swiper
+      slidesPerView={5}
+      // spaceBetween={30}
+      modules={[Navigation, A11y]}
+      navigation
+      initialSlide={cache.getIndex(id)}
+      onActiveIndexChange={(e) => {
+        cache.setIndex(id, e.activeIndex)
 
-      <div ref={carouselRef} className="myCarousel">
-        <button
-          className="myCarousel-nav-left"
-          onClick={() => {
-            if (!carouselWidth) return
-            setTransformValue((prevValue) => prevValue + carouselWidth)
-          }}
-        >
-          &larr;
-        </button>
-        <button
-          className={'myCarousel-nav-right'}
-          onClick={() => {
-            if (!carouselWidth) return
-            setTransformValue((prevValue) => prevValue - carouselWidth)
-          }}
-        >
-          &rarr;
-        </button>
-
-        <div
-          ref={displayRef}
-          className="myCarousel-display"
-          style={carouselStyle}
-        >
-          {items.map((item) => (
-            <Component key={nanoid()} {...item} className="myCarousel-item" />
-          ))}
-        </div>
-      </div>
-    </Container>
+        console.log('active index changed')
+        console.log({ id, cache: cache[id] })
+      }}
+    >
+      {content.map((x, i) => (
+        <SwiperSlide key={i} data-slide={`slide${i + 1}`}>
+          {x}
+        </SwiperSlide>
+      ))}
+    </Swiper>
   )
 }
