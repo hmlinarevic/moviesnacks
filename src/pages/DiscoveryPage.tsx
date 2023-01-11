@@ -1,73 +1,94 @@
-import { useEffect } from 'react'
-import { Container, Row, Carousel, Col } from 'react-bootstrap'
-import { useAppSelector, useAppDispatch } from '../hooks'
-import {
-  discoverNowPlaying,
-  discoverPopular,
-} from '../store/movieDiscoverySlice'
-import { MovieDetails } from '../types/APIResponsesTypes'
+import { useState, useEffect, useLayoutEffect, useRef } from 'react'
+import { nanoid } from 'nanoid'
+import { Container } from 'react-bootstrap'
+import { useAppSelector } from '../hooks'
+import { groupMoviesByGenre } from '../utils/movie'
+import Carousel from '../components/ui/Carousel'
 import MovieCard from '../components/movie/MovieCard'
+import FilterNavigation from '../components/ui/FilterNavigation'
+import './DiscoveryPage.css'
 
-const sliceToMultiList = (data: any, sliceSize = 5) => {
-  const multiList = []
-  const numOfSlices = data.length / sliceSize
+export default function DiscoveryPage() {
+  // movies
+  const nowPlaying = useAppSelector((state) => state.movies.nowPlaying)
+  const popular = useAppSelector((state) => state.movies.popular)
 
-  let start = 0
-  let end = sliceSize
+  const popularMoviesByGenre = groupMoviesByGenre(popular)
 
-  for (let i = 0; i < numOfSlices; i++) {
-    multiList.push(data.slice(start, end))
-    start += sliceSize
-    end += sliceSize
-  }
+  console.log({ popularMoviesByGenre })
 
-  return multiList
-}
+  // slider config
+  const containerRef = useRef<HTMLDivElement | null>(null)
+  const [containerWidth, setContainerWidth] = useState<number>()
+  const [numOfSlides, setNumOfSlides] = useState(3)
+  const slideWidth = 260
 
-const DiscoveryPage = () => {
-  const discovery = useAppSelector((state) => state.movieDiscovery)
-  const dispatch = useAppDispatch()
+  // loading
+  const [isLoadingContent, setIsLoadingContent] = useState(true)
+
+  useLayoutEffect(() => {
+    if (!containerRef.current) return
+
+    const { clientWidth } = containerRef.current
+    const slides = Math.round(clientWidth / slideWidth)
+
+    setNumOfSlides(slides)
+  }, [containerWidth])
 
   useEffect(() => {
-    dispatch(discoverNowPlaying())
-    // dispatch(discoverPopular())
-  }, [dispatch])
+    const handleWindowResize = () => {
+      setContainerWidth(containerRef.current?.clientWidth)
+    }
 
-  const movies = discovery.nowPlaying.data
-  const moviesMulitList = sliceToMultiList(movies)
+    window.addEventListener('resize', handleWindowResize)
 
-  console.log({ moviesMulitList })
+    setIsLoadingContent(false)
 
-  const content = moviesMulitList.map((movieList) => (
-    <Carousel.Item key={movieList[0].id}>
-      <Row>
-        {movieList.map((movie: MovieDetails) => (
-          <Col key={movie.id} lg>
-            <MovieCard
-              id={movie.id}
-              title={movie.title}
-              overview={movie.overview}
-              genresIds={movie.genresIds}
-              posterPath={movie.posterPath}
-              releaseDate={movie.releaseDate}
-              isFavorite={false} //test state (fix)
-            />
-          </Col>
-        ))}
-      </Row>
-    </Carousel.Item>
-  ))
+    return () => {
+      window.removeEventListener('resize', handleWindowResize)
+    }
+  }, [])
 
   return (
-    <Container>
-      <div>
-        <h3>Discover movies</h3>
-        <Carousel interval={null} indicators={false}>
-          {content}
-        </Carousel>
-      </div>
+    <Container ref={containerRef}>
+      {isLoadingContent && <h3>loading...</h3>}
+
+      {!isLoadingContent && (
+        <>
+          <FilterNavigation />
+
+          <Carousel
+            id="carousel-0"
+            items={nowPlaying}
+            heading="Now Playing"
+            component={MovieCard}
+            numOfSlides={numOfSlides}
+          />
+          <Carousel
+            id="carousel-1"
+            items={popular}
+            heading="Popular"
+            component={MovieCard}
+            numOfSlides={numOfSlides}
+          />
+
+          {Object.entries(popularMoviesByGenre).map((moviesByGenre, i) => {
+            const genre = moviesByGenre[0]
+            const listOfMovies = moviesByGenre[1]
+
+            return (
+              <Carousel
+                key={nanoid()}
+                id={`carousel-${i + 2}`}
+                items={listOfMovies}
+                heading={genre}
+                component={MovieCard}
+                numOfSlides={numOfSlides}
+              />
+            )
+          })}
+        </>
+      )}
     </Container>
   )
 }
-
-export default DiscoveryPage
