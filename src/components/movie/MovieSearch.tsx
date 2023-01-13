@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAppDispatch } from '../../hooks'
-import { search } from '../../store/movieSearchSlice'
+import { searchMovies } from '../../store/searchSlice'
 import './MovieSearch.css'
 
 const MovieSearch = () => {
@@ -14,7 +14,7 @@ const MovieSearch = () => {
 
     const timeoutID = setTimeout(() => {
       navigate('/results')
-      dispatch(search(searchTerm))
+      dispatch(searchMovies(searchTerm))
     }, 1000)
 
     return () => {
@@ -29,7 +29,7 @@ const MovieSearch = () => {
       <input
         type="search"
         placeholder="Search movies"
-        className="form-control search me-2"
+        className="form-control search"
         aria-label="Search movies"
         onChange={(e) => setSearchTerm(e.target.value)}
       />
