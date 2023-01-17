@@ -1,70 +1,68 @@
-import { Navigation, A11y } from 'swiper'
-
-import { Swiper, SwiperSlide, useSwiper } from 'swiper/react'
 import { nanoid } from 'nanoid'
-
+import { Navigation, A11y } from 'swiper'
+import { Swiper, SwiperSlide } from 'swiper/react'
 import 'swiper/css'
 import 'swiper/css/navigation'
+import './Carousel.css'
 
-type Props<U> = {
-  items: U[]
-  component: React.ElementType
+type Props<T> = {
   id: string
+  items: T[]
+  heading: string
+  component: React.ElementType
+  numOfSlides: number
 }
 
-interface Cache {
-  [k: string]: any
+interface CarouselCache extends Record<string, any> {
+  init: (id: string) => void
+  setIndex: (id: string, index: number) => void
+  getIndex: (id: string) => number
 }
 
-// remember carousel slide position
-const cache: Cache = {
-  init(id: string) {
-    this.id = id
-
+const cache: CarouselCache = {
+  init(id) {
     this[id] = {
       activeIndex: 0,
     }
   },
-  getIndex(id: string) {
-    return this[id].activeIndex
-  },
-  setIndex(id: string, index: number) {
+  setIndex(id, index) {
     this[id].activeIndex = index
+  },
+  getIndex(id) {
+    return this[id].activeIndex
   },
 }
 
 export default function Carousel<T>({
   id,
   items,
+  heading,
   component: Component,
+  numOfSlides,
 }: Props<T>) {
-  const content = items.map((item) => {
-    return <Component key={nanoid()} {...item} />
-  })
+  const content = items.map((item) => (
+    <SwiperSlide key={nanoid()}>
+      <Component {...item} />
+    </SwiperSlide>
+  ))
 
   if (!cache[id]) {
     cache.init(id)
   }
 
   return (
-    <Swiper
-      slidesPerView={5}
-      // spaceBetween={30}
-      modules={[Navigation, A11y]}
-      navigation
-      initialSlide={cache.getIndex(id)}
-      onActiveIndexChange={(e) => {
-        cache.setIndex(id, e.activeIndex)
-
-        console.log('active index changed')
-        console.log({ id, cache: cache[id] })
-      }}
-    >
-      {content.map((x, i) => (
-        <SwiperSlide key={i} data-slide={`slide${i + 1}`}>
-          {x}
-        </SwiperSlide>
-      ))}
-    </Swiper>
+    <>
+      <h2>{heading}</h2>
+      <Swiper
+        slidesPerView={numOfSlides}
+        spaceBetween={20}
+        modules={[Navigation, A11y]}
+        navigation
+        initialSlide={cache.getIndex(id)}
+        onActiveIndexChange={(e) => cache.setIndex(id, e.activeIndex)}
+      >
+        {content}
+      </Swiper>
+    </>
   )
 }
