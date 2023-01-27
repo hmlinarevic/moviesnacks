@@ -14,8 +14,6 @@ export const getApiEndpoint = (path: string, params?: QueryParams) => {
 export async function getApiData(
   endpoint: string
 ): Promise<MovieAPIResponse | undefined> {
-  console.log('fetching data...', { getApiData: endpoint })
-
   try {
     const res = await fetch(endpoint)
 

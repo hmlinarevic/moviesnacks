@@ -2,8 +2,6 @@ import { API_KEY } from '../utils/api'
 
 export interface QueryParams {
   [k: string]: string | number
-  // lang?: string
-  // page?: number
 }
 
 export const makeQueryString = (path: string, params?: QueryParams): string => {

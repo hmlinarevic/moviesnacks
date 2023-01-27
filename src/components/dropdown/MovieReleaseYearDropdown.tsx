@@ -1,21 +1,22 @@
 import { useState, useEffect } from 'react'
 import { Dropdown, Form } from 'react-bootstrap'
-import { FilterProps } from '../ui/Filters'
 
-export default function MovieReleaseYearDropdown(props: FilterProps) {
-  const [releaseYear, setReleaseYear] = useState(0)
+interface Props {
+  setReleaseYear: (year: number) => void
+}
 
-  // declared at parent (<DiscoveryPage />)
-  const [filter, setFilter] = props.filterState
+export default function MovieReleaseYearDropdown(props: Props) {
+  const [selected, setSelected] = useState(0)
 
   // debounce <Form.Range onChange />
   useEffect(() => {
-    if (!releaseYear) return
+    if (!selected) return
 
-    const timeoutID = setTimeout(() => setFilter(releaseYear), 1000)
+    const timeoutID = setTimeout(() => props.setReleaseYear(selected), 1000)
 
     return () => clearTimeout(timeoutID)
-  }, [releaseYear, setFilter])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selected])
 
   return (
     <Dropdown>
@@ -23,7 +24,7 @@ export default function MovieReleaseYearDropdown(props: FilterProps) {
       <Dropdown.Menu variant="dark" style={{ minWidth: '300px' }}>
         <div className="m-2">
           <Form.Label>
-            Release year <span className="me-1">{releaseYear}</span>
+            Release year <span className="me-1">{selected}</span>
           </Form.Label>
           <div className="d-flex">
             <span className="me-2">1900</span>
@@ -31,7 +32,7 @@ export default function MovieReleaseYearDropdown(props: FilterProps) {
               min={1900}
               max={new Date().getFullYear()}
               step={1}
-              onChange={(e) => setReleaseYear(e.target.valueAsNumber)}
+              onChange={(e) => setSelected(e.target.valueAsNumber)}
             />
             <span className="ms-2">{new Date().getFullYear()}</span>
           </div>

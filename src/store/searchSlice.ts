@@ -6,39 +6,34 @@ import { MovieDetails } from '../types/APIResponsesTypes'
 
 interface SearchState {
   movies: MovieDetails[]
-
-  isLoading: {
-    movies: true | false
-  }
+  isLoading: { movies: true | false }
+  hasError: true | false
 }
 
 const initialState: SearchState = {
   movies: [],
-
-  isLoading: {
-    movies: true,
-  },
+  isLoading: { movies: true },
+  hasError: false,
 }
 
 export const searchMovies = createAsyncThunk(
   'search/searchMovies',
   async (serchTerm: string) => {
     const endpoint = getApiEndpoint('/search/movie', { query: serchTerm })
-    console.log({ searching: true, endpoint })
+
     const cacheResponse = await getCacheData<MovieDetails[]>(
-      'search-cache',
+      'movie-search',
       endpoint
     )
 
     if (cacheResponse) {
-      console.log('returned from cache ', { cacheResponse })
       return cacheResponse
     } else {
       const apiResponse = await getApiData(endpoint)
       if (apiResponse?.results.length) {
         const adapted = camelcaseKeys(apiResponse.results)
 
-        addDataIntoCache('search-cache', endpoint, adapted)
+        addDataIntoCache('movie-search', endpoint, adapted)
 
         return adapted
       }
@@ -59,6 +54,9 @@ export const searchSlice = createSlice({
         state.movies = action.payload
         state.isLoading.movies = false
       }
+    })
+    builder.addCase(searchMovies.rejected, (state) => {
+      state.hasError = true
     })
   },
 })

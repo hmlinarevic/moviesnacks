@@ -1,0 +1,18 @@
+.filters {
+  /* color: rgba(255, 255, 255, 0.55); */
+  /* border: 1px solid gray;
+  padding: 1rem;
+  border-radius: 10px; */
+}
+
+.filters-text {
+  font-weight: 500;
+}
+
+.filters p {
+  margin-bottom: 0;
+}
+
+.filters-svg {
+  stroke: white;
+}

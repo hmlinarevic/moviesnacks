@@ -1,31 +1,33 @@
 import { useState, useEffect } from 'react'
 import { Dropdown } from 'react-bootstrap'
-import { FilterProps } from '../ui/Filters'
 
-export default function MovieGenreDropdown(props: FilterProps) {
-  const [selectedGenre, setSelectedGenre] = useState('')
+interface Props {
+  listOfGenre: string[]
+  setGenre: (genre: string) => void
+  isClear: boolean
+}
 
-  // declared at parent (<DiscoveryPage />)
-  const [filter, setFilter] = props.filterState
+export default function MovieGenreDropdown(props: Props) {
+  const [selected, setSelected] = useState('')
 
   useEffect(() => {
-    if (!filter) {
-      setSelectedGenre('')
+    if (props.isClear) {
+      setSelected('')
     }
-  }, [filter])
+  }, [props.isClear])
 
   return (
     <Dropdown
       className="ms-2"
       onSelect={(e) => {
-        if (!e) return
+        if (e) {
+          props.setGenre(e)
+          setSelected(e)
+        }
 
-        if (e === selectedGenre) {
-          setFilter('')
-          setSelectedGenre('')
-        } else {
-          setFilter(e)
-          setSelectedGenre(e)
+        if (e === selected) {
+          setSelected('')
+          props.setGenre('')
         }
       }}
     >
@@ -36,10 +38,8 @@ export default function MovieGenreDropdown(props: FilterProps) {
             <Dropdown.Item
               eventKey={genre}
               key={genre}
-              active={selectedGenre === genre}
+              active={genre === selected}
             >
-              {/* <button>{genre}</button> */}
-              {/* active={isGenreButtonActive} */}
               <p>{genre}</p>
             </Dropdown.Item>
           ))}

@@ -24,17 +24,17 @@ const filterFunction = (
 
 export default function useFilter<T extends DataToFilter>(
   data: T
-): [any[], React.Dispatch<React.SetStateAction<Filter>>] {
+): [any[], React.Dispatch<React.SetStateAction<Filter | null>>] {
   const [content, setContent] = useState<any[]>([])
-  const [filter, setFilter] = useState({} as Filter)
+  const [filter, setFilter] = useState<Filter | null>(null)
 
   useEffect(() => {
-    const { prop, callback } = filter
-
-    if (filter.prop) {
-      const content = filterFunction(data, prop, callback)
+    if (filter && filter.prop) {
+      const content = filterFunction(data, filter.prop, filter.callback)
 
       setContent(content)
+    } else {
+      setContent([])
     }
   }, [data, filter])
 

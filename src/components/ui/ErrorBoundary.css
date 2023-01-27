@@ -1,0 +1,8 @@
+.container-error a {
+  color: var(--white);
+  text-decoration: underline;
+}
+
+.container-error a:hover {
+  color: var(--purple);
+}

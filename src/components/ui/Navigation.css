@@ -2,3 +2,46 @@
   padding: var(--nav-padding) 0;
   background-color: #000;
 }
+
+.offcanvas {
+  background-color: var(--black);
+}
+
+@media (max-width: 767px) {
+  .nav-custom {
+    padding-right: 0;
+  }
+
+  .offcanvas-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .offcanvas-body .nav-menu-btn-discover {
+    text-decoration: underline;
+  }
+
+  .offcanvas-body form {
+    width: 60%;
+  }
+
+  .offcanvas-body .nav-link {
+    margin-bottom: 1rem;
+  }
+
+  .offcanvas .dropdown-menu {
+    width: 300px;
+    margin-bottom: 1rem;
+  }
+
+  /* overwrite bootstrap */
+  .justify-content-end {
+    justify-content: unset !important;
+  }
+
+  /* overwrite bootstrap */
+  .flex-grow-1 {
+    flex-grow: unset !important;
+  }
+}

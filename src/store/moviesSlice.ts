@@ -52,19 +52,19 @@ export const fetchMovieGenres = createAsyncThunk(
 
 export const fetchPopularMovies = createAsyncThunk(
   'movies/fetchPopular',
-  async (pages: number, { getState }) => {
+  async (options: { pages: number; isRefetch: true | false }, { getState }) => {
     let results: MovieDetails[] = []
     let endpoint
 
-    for (let currentPage = 1; currentPage <= pages; currentPage++) {
+    for (let currentPage = 1; currentPage <= options.pages; currentPage++) {
       endpoint = getApiEndpoint('/movie/popular', { page: currentPage })
 
       const cacheResponse = await getCacheData<MovieDetails[]>(
-        'discover-movies',
+        'movie-discovery',
         endpoint
       )
 
-      if (cacheResponse) {
+      if (cacheResponse && !options.isRefetch) {
         results = results.concat(cacheResponse)
       } else {
         const apiResponse = await getApiData(endpoint)
@@ -96,7 +96,7 @@ export const fetchPopularMovies = createAsyncThunk(
           })
 
           endpoint &&
-            addDataIntoCache('discover-movies', endpoint, adaptedResponse)
+            addDataIntoCache('movie-discovery', endpoint, adaptedResponse)
         }
       }
     }
@@ -110,7 +110,7 @@ export const fetchNowPlayingMovies = createAsyncThunk(
   async () => {
     const endpoint = getApiEndpoint('/movie/now_playing')
     const cacheResponse = await getCacheData<MovieDetails[]>(
-      'discover-movies',
+      'movie-discovery',
       endpoint
     )
 
@@ -120,7 +120,7 @@ export const fetchNowPlayingMovies = createAsyncThunk(
       if (apiResponse?.results) {
         const adaptedResponse = camelcaseKeys(apiResponse.results)
 
-        addDataIntoCache('discover-movies', endpoint, adaptedResponse)
+        addDataIntoCache('movie-discovery', endpoint, adaptedResponse)
 
         return adaptedResponse
       }

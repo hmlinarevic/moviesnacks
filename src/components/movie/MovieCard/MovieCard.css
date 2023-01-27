@@ -1,4 +1,9 @@
+.movie-card-test {
+  height: 340px;
+}
+
 .movie-card-container {
+  width: auto;
   height: 340px;
   overflow: hidden;
 }
@@ -11,11 +16,6 @@
   border: 2px solid #333;
   transition: 150ms transform;
   cursor: pointer;
-}
-
-.movie-card:hover {
-  /* border-color: var(--purple); */
-  /* transform: scale(1.02); */
 }
 
 .movie-card img {
@@ -74,6 +74,10 @@
 .movie-card-btn-favorite {
   background-color: orange;
 }
+
+/* .movie-card-image-placeholder {
+  background-color: 000;
+} */
 
 .movie-card-btn:hover,
 .movie-card-btn:active {

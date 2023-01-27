@@ -1,88 +1,79 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import { Container, Row, Col } from 'react-bootstrap'
-import { MovieDetails } from '../types/APIResponsesTypes'
-import { getMoviePoster } from '../utils'
-import { getCachedMovieDetails } from '../utils/cache'
-import HeartSvg from '../components/svg/HeartSvg'
 import { useAppDispatch, useAppSelector } from '../hooks'
-import { update } from '../store/movieFavoritesSlice'
+import { MovieDetails } from '../types/APIResponsesTypes'
+import {
+  updateFavoriteMovies,
+  updateFavoriteMoviesStorage,
+} from '../store/favoritesSlice'
+import { getMoviePoster } from '../utils/movie'
+import { getCacheData } from '../utils/cache'
+import HeartSvg from '../components/svg/HeartSvg'
 
-const MoviePage = () => {
+export default function MoviePage() {
   const { id } = useParams()
-  const { state: routerState } = useLocation()
-  const [cachedData, setCachedData] = useState({} as MovieDetails)
-  const favorites = useAppSelector((state) => state.movieFavorites)
+  const { state } = useLocation()
+  const [movieData, setMovieData] = useState<MovieDetails>()
+  const favoriteMovies = useAppSelector((state) => state.favorites.movies)
   const dispatch = useAppDispatch()
 
-  const loadCachedMovieData = useCallback(async () => {
-    const cacheResponse = await getCachedMovieDetails(`/movie/${id}`)
-
-    cacheResponse && setCachedData(cacheResponse)
-  }, [id])
-
-  let dataSource: MovieDetails
-
-  // data loaded from react router's useNavigate hook
-  if (routerState) {
-    dataSource = routerState
-  }
-  // data loaded from cache
-  else {
-    dataSource = cachedData
-  }
-
-  const isFavorite = favorites.find(
-    (movieFavorite) => movieFavorite.id === dataSource.id
-  )
-
   useEffect(() => {
-    if (dataSource === cachedData) {
-      loadCachedMovieData()
+    if (!state) {
+      getCacheData<MovieDetails>('movie-details', `/movie/${id}`).then((data) =>
+        setMovieData(data)
+      )
+    } else {
+      setMovieData(state)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [id, state])
 
-  const content = (
-    <>
-      <Col sm md lg={{ span: 4 }} className="me-lg-5">
-        <img
-          src={getMoviePoster(dataSource.posterPath)}
-          alt={`${dataSource.title} movie poster`}
-          style={{ width: '100%' }}
-        />
-      </Col>
-      <Col sm md lg>
-        <h2>{dataSource.title}</h2>
-        <p>{dataSource.overview}</p>
-        <button
-          className={
-            isFavorite
-              ? 'btn-mybtn btn-mybtn-primary'
-              : 'btn-mybtn btn-mybtn-primary-outline'
-          }
-          onClick={() => {
-            dispatch(
-              update({
-                id: dataSource.id,
-                title: dataSource.title,
-              })
-            )
-          }}
-        >
-          <span style={{ marginRight: '.25rem' }}>favorite</span>
-
-          <HeartSvg />
-        </button>
-      </Col>
-    </>
-  )
+  const isFavorite = favoriteMovies.find((movie) => movie.id === Number(id))
 
   return (
     <Container>
-      <Row>{content}</Row>
+      {!movieData || !id ? (
+        <p>movie not found</p>
+      ) : (
+        <Row>
+          <Col sm md lg={{ span: 4 }}>
+            <img
+              src={getMoviePoster(movieData.posterPath)}
+              alt={`${movieData.title} dataSource poster`}
+              style={{ width: '100%' }}
+            />
+          </Col>
+          <Col sm md lg>
+            <h2>{movieData.title}</h2>
+            <p>{movieData.overview}</p>
+            <button
+              className={
+                isFavorite
+                  ? 'btn-mybtn btn-mybtn-primary'
+                  : 'btn-mybtn btn-mybtn-primary-outline'
+              }
+              onClick={() => {
+                dispatch(
+                  updateFavoriteMovies({
+                    id: Number(id),
+                    title: movieData.title,
+                  })
+                )
+
+                dispatch(
+                  updateFavoriteMoviesStorage({
+                    ...movieData,
+                  })
+                )
+              }}
+            >
+              <span style={{ marginRight: '.25rem' }}>favorite</span>
+
+              <HeartSvg />
+            </button>
+          </Col>
+        </Row>
+      )}
     </Container>
   )
 }
-
-export default MoviePage

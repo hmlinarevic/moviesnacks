@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAppDispatch } from '../../hooks'
 import { searchMovies } from '../../store/searchSlice'
+import { MOVIESEARCH_DEBOUNCE_TIME } from '../../config'
 import './MovieSearch.css'
 
-const MovieSearch = () => {
+export default function MovieSearch() {
   const [searchTerm, setSearchTerm] = useState('')
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
@@ -15,7 +16,7 @@ const MovieSearch = () => {
     const timeoutID = setTimeout(() => {
       navigate('/results')
       dispatch(searchMovies(searchTerm))
-    }, 1000)
+    }, MOVIESEARCH_DEBOUNCE_TIME)
 
     return () => {
       clearTimeout(timeoutID)
@@ -36,5 +37,3 @@ const MovieSearch = () => {
     </>
   )
 }
-
-export default MovieSearch

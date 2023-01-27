@@ -1,6 +1,8 @@
+import { memo } from 'react'
 import { nanoid } from 'nanoid'
 import { Navigation, A11y } from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/react'
+import { CAROUSEL_SLIDE_WIDTH } from '../../config'
 import 'swiper/css'
 import 'swiper/css/navigation'
 import './Carousel.css'
@@ -8,11 +10,14 @@ import './Carousel.css'
 type Props<T> = {
   id: string
   items: T[]
-  heading: string
+  heading?: string
+  className?: string
+  spaceBetween: number
   component: React.ElementType
-  numOfSlides: number
+  parentContainerWidth: number
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 interface CarouselCache extends Record<string, any> {
   init: (id: string) => void
   setIndex: (id: string, index: number) => void
@@ -33,36 +38,38 @@ const cache: CarouselCache = {
   },
 }
 
-export default function Carousel<T>({
+export default memo(function Carousel<T>({
   id,
   items,
   heading,
+  className,
+  spaceBetween,
   component: Component,
-  numOfSlides,
+  parentContainerWidth,
 }: Props<T>) {
-  const content = items.map((item) => (
-    <SwiperSlide key={nanoid()}>
-      <Component {...item} />
-    </SwiperSlide>
-  ))
+  const numOfSlides = Math.round(parentContainerWidth / CAROUSEL_SLIDE_WIDTH)
 
   if (!cache[id]) {
     cache.init(id)
   }
 
   return (
-    <>
-      <h2>{heading}</h2>
+    <div className={className}>
+      {heading && <h2>{heading}</h2>}
       <Swiper
+        spaceBetween={spaceBetween}
         slidesPerView={numOfSlides}
-        spaceBetween={20}
         modules={[Navigation, A11y]}
         navigation
         initialSlide={cache.getIndex(id)}
         onActiveIndexChange={(e) => cache.setIndex(id, e.activeIndex)}
       >
-        {content}
+        {items.map((item) => (
+          <SwiperSlide key={nanoid()}>
+            <Component {...item} />
+          </SwiperSlide>
+        ))}
       </Swiper>
-    </>
+    </div>
   )
-}
+})

@@ -1,0 +1,13 @@
+.discovery-carousel {
+  margin-bottom: 3rem;
+}
+
+.discovery-carousel:last-child {
+  margin-bottom: 0;
+}
+
+@media (min-width: 767px) {
+  .discovery-carousel h2 {
+    text-align: left;
+  }
+}

@@ -4,6 +4,7 @@ export interface MovieAPIResponse {
   total_results: number
   total_pages: number
   success: true | false
+  genres: MovieGenre[]
 }
 
 export interface MovieDetails {
@@ -12,5 +13,11 @@ export interface MovieDetails {
   overview: string
   releaseDate: string
   posterPath: string
-  genresIds: number[]
+  genreIds: number[]
+  genres?: string[] | undefined
+}
+
+export interface MovieGenre {
+  id: number
+  name: string
 }

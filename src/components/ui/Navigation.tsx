@@ -1,38 +1,10 @@
-import { Link, useLocation, useNavigate } from 'react-router-dom'
-import {
-  Container,
-  Form,
-  Nav,
-  Navbar,
-  NavDropdown,
-  Offcanvas,
-} from 'react-bootstrap'
+import { Container, Form, Navbar, Offcanvas } from 'react-bootstrap'
 import Logo from '../logo'
+import NavigationMenu from './NavigationMenu'
 import MovieSearch from '../movie/MovieSearch'
-import { useAppDispatch, useAppSelector } from '../../hooks'
-import { clearFavoriteMovies } from '../../store/favoritesSlice'
 import './Navigation.css'
 
-const Navigation = () => {
-  const favoriteMovies = useAppSelector((state) => state.favorites.movies)
-  const location = useLocation()
-  const dispatch = useAppDispatch()
-  const navigate = useNavigate()
-
-  const dropDownContent = favoriteMovies.map((movie) => (
-    <Link key={movie.id} className="dropdown-item" to={`movie/${movie.id}`}>
-      {movie.title}
-    </Link>
-  ))
-
-  const handleClearFavorites = () => {
-    dispatch(clearFavoriteMovies())
-
-    if (location.pathname === '/results') {
-      navigate('/')
-    }
-  }
-
+export default function Navigation() {
   return (
     <Container>
       <Navbar key="md" variant="dark" expand="md" className="nav">
@@ -47,33 +19,13 @@ const Navigation = () => {
           placement="end"
         >
           <Offcanvas.Header closeButton className="btn-close-white">
-            <Offcanvas.Title id="offcanvasNavbarLabel-expand-md">
-              Offcanvas
-            </Offcanvas.Title>
+            <Offcanvas.Title id="offcanvasNavbarLabel-expand-md" />
           </Offcanvas.Header>
           <Offcanvas.Body>
-            <Nav className="justify-content-end flex-grow-1 pe-3">
-              <Nav.Link onClick={() => navigate('/discover')}>
-                Discover
-              </Nav.Link>
-              <NavDropdown
-                title="Favorites"
-                id="offcanvasNavbarDropdown-expand-md"
-              >
-                {dropDownContent.length ? (
-                  <>
-                    {dropDownContent}
+            {/* menu */}
+            <NavigationMenu />
 
-                    <NavDropdown.Divider />
-                    <NavDropdown.Item onClick={handleClearFavorites}>
-                      clear favorites
-                    </NavDropdown.Item>
-                  </>
-                ) : (
-                  <NavDropdown.Item disabled>empty</NavDropdown.Item>
-                )}
-              </NavDropdown>
-            </Nav>
+            {/* search */}
             <Form className="d-flex" onSubmit={(e) => e.preventDefault()}>
               <MovieSearch />
             </Form>
@@ -83,5 +35,3 @@ const Navigation = () => {
     </Container>
   )
 }
-
-export default Navigation

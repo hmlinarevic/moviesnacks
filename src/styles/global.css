@@ -55,7 +55,7 @@ ul {
   list-style: none;
 }
 
-/* buttons ----------------
+/* buttons -------------------
 --------------------------  */
 
 .btn-mybtn {
@@ -87,4 +87,19 @@ ul {
 
 .btn-mybtn-primary-outline:active {
   background-color: var(--purple-lighter);
+}
+
+/* carousel ------------------
+--------------------------  */
+
+.swiper-notification {
+  display: none !important;
+}
+
+.carousel-control-next {
+  right: -110px;
+}
+
+.carousel-control-prev {
+  left: -110px;
 }

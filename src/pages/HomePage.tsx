@@ -1,12 +1,21 @@
 import { Link } from 'react-router-dom'
-import { Container, Row, Col } from 'react-bootstrap'
-import StaticPostersCarousel from '../components/ui/StaticPosterCarousel'
+import { Container, Row, Col, Spinner } from 'react-bootstrap'
+import { useAppSelector } from '../hooks'
+import { getMoviePoster } from '../utils/movie'
 import LogoText from '../components/logo/LogoText'
+import Carousel from '../components/ui/Carousel'
+import Poster from '../components/movie/Poster'
 import tabletUrl from '../assets/moviesnacks-tablet.png'
 import phoneUrl from '../assets/moviesnacks-phone.png'
 import './HomePage.css'
 
-const HomePage = () => {
+export default function HomePage() {
+  const nowPlayingMovies = useAppSelector((state) =>
+    state.movies.nowPlaying.map((movie) => ({
+      imgUrl: getMoviePoster(movie.posterPath),
+    }))
+  )
+
   return (
     <>
       <Container>
@@ -16,7 +25,40 @@ const HomePage = () => {
               lg={{ span: 6, order: 2 }}
               className="d-flex justify-content-center"
             >
-              <StaticPostersCarousel />
+              <div className="posters-carousel">
+                {nowPlayingMovies.length ? (
+                  <>
+                    <Carousel
+                      id="poster-carousel-1"
+                      className="poster-carousel"
+                      items={nowPlayingMovies.slice(0, 10)}
+                      spaceBetween={10}
+                      component={Poster}
+                      parentContainerWidth={800}
+                    />
+                    <Carousel
+                      id="poster-carousel-2"
+                      className="poster-carousel"
+                      items={nowPlayingMovies.slice(11, 20)}
+                      component={Poster}
+                      spaceBetween={10}
+                      parentContainerWidth={800}
+                    />
+                  </>
+                ) : (
+                  <div
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <Spinner />
+                  </div>
+                )}
+              </div>
             </Col>
             <Col lg>
               <h1>All your streaming services in one app.</h1>
@@ -78,5 +120,3 @@ const HomePage = () => {
     </>
   )
 }
-
-export default HomePage

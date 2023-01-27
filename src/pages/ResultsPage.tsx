@@ -1,34 +1,33 @@
-import { Container, Row, Spinner } from 'react-bootstrap'
+import { Container, Row, Col, Spinner } from 'react-bootstrap'
 import { useAppSelector } from '../hooks'
 import MovieCard from '../components/movie/MovieCard'
+import ErrorBoundary from '../components/ui/ErrorBoundary'
 
-const ResultsPage = () => {
-  const favorites = useAppSelector((state) => state.movieFavorites)
-  const searched = useAppSelector((state) => state.movieSearch)
+function ResultsPage() {
+  const searched = useAppSelector((state) => ({
+    movies: state.search.movies,
+    isLoadingMovies: state.search.isLoading.movies,
+    hasError: state.search.hasError,
+  }))
 
-  const content = searched.data.map((movie) => {
-    // find out if movie is favorited
-    const isFavorite = Boolean(
-      favorites.find((favoritedMovie) => favoritedMovie.id === movie.id)
-    )
-
+  const content = searched.movies.map((movie) => {
     if (!movie.posterPath) return null
 
     return (
-      <MovieCard
-        key={movie.id}
-        id={movie.id}
-        title={movie.title}
-        overview={movie.overview}
-        genresIds={movie.genresIds}
-        posterPath={movie.posterPath}
-        releaseDate={movie.releaseDate}
-        isFavorite={isFavorite}
-      />
+      <Col key={movie.id} className="mb-4" xs={6} sm={4} lg={2}>
+        <MovieCard
+          id={movie.id}
+          title={movie.title}
+          overview={movie.overview}
+          genreIds={movie.genreIds}
+          posterPath={movie.posterPath}
+          releaseDate={movie.releaseDate}
+        />
+      </Col>
     )
   })
 
-  if (searched.isLoading) {
+  if (searched.isLoadingMovies) {
     return (
       <Container>
         <Row className="d-flex justify-content-center align-items-center">
@@ -47,4 +46,11 @@ const ResultsPage = () => {
   )
 }
 
-export default ResultsPage
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default function ResultsPageErrorBoundary(props: any) {
+  return (
+    <ErrorBoundary>
+      <ResultsPage {...props} />
+    </ErrorBoundary>
+  )
+}

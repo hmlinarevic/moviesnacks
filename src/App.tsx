@@ -1,10 +1,5 @@
 import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import Navigation from './components/ui/Navigation'
-import HomePage from './pages/HomePage'
-import DiscoveryPage from './pages/DiscoveryPage'
-import ResultsPage from './pages/ResultsPage'
-import MoviePage from './pages/MoviePage'
 import { useAppDispatch } from './hooks'
 import {
   fetchMovieGenres,
@@ -12,13 +7,31 @@ import {
   fetchPopularMovies,
 } from './store/moviesSlice'
 import { loadFavoriteMovies } from './store/favoritesSlice'
+import Navigation from './components/ui/Navigation'
+import HomePage from './pages/HomePage'
+import DiscoveryPage from './pages/DiscoveryPage'
+import ResultsPage from './pages/ResultsPage'
+import MoviePage from './pages/MoviePage'
+import NotFound404Page from './pages/NotFound404Page'
+import { POPULAR_MOVIES_PAGES } from './config'
+import { createLocalStorageWrapper } from './utils/localStorage'
 
-const App = () => {
+const { saveToStorage, loadFromStorage } =
+  createLocalStorageWrapper<number>('date-snap')
+
+export default function App() {
   const dispatch = useAppDispatch()
 
   useEffect(() => {
+    const currentDate = new Date().getDate()
+    const previousDate = loadFromStorage()
+
+    !previousDate && saveToStorage(new Date().getDate())
+
+    const isRefetch = currentDate !== previousDate ? true : false
+
     dispatch(fetchMovieGenres())
-    dispatch(fetchPopularMovies(20)) // argument --> num of pages
+    dispatch(fetchPopularMovies({ pages: POPULAR_MOVIES_PAGES, isRefetch }))
     dispatch(fetchNowPlayingMovies())
 
     dispatch(loadFavoriteMovies())
@@ -32,9 +45,8 @@ const App = () => {
         <Route path="/discover" element={<DiscoveryPage />} />
         <Route path="/results" element={<ResultsPage />} />
         <Route path="/movie/:id" element={<MoviePage />} />
+        <Route path="*" element={<NotFound404Page />} />
       </Routes>
     </BrowserRouter>
   )
 }
-
-export default App

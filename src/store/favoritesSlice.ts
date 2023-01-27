@@ -21,15 +21,22 @@ export const updateFavoriteMoviesStorage = createAsyncThunk(
   async (data: MovieDetails, { getState }) => {
     const state = getState() as RootState
 
-    addDataIntoCache('movie-favorites', 'list', state.favorites.movies)
-    addDataIntoCache('movie-data', `movie/${data.id}`, data)
+    addDataIntoCache('movie-favorites', '/list', state.favorites.movies)
+    addDataIntoCache('movie-details', `/movie/${data.id}`, data)
+  }
+)
+
+export const clearFavoriteMoviesStorage = createAsyncThunk(
+  'favorites/clearFavoritesMoviesStorage',
+  async () => {
+    addDataIntoCache('movie-favorites', '/list', [])
   }
 )
 
 export const loadFavoriteMovies = createAsyncThunk(
   'favorites/loadFavoriteMovies',
   async () => {
-    const data = await getCacheData<MovieDetails[]>('movie-favorites', 'list')
+    const data = await getCacheData<MovieDetails[]>('movie-favorites', '/list')
 
     return data
   }

@@ -1,17 +1,18 @@
 import { configureStore } from '@reduxjs/toolkit'
-import movieDiscovery from './movieDiscoverySlice'
-import movieFavorites from './movieFavoritesSlice'
-import movieSearch from './movieSearchSlice'
+import search from './searchSlice'
+import movies from './moviesSlice'
+import favorites from './favoritesSlice'
 
 export const store = configureStore({
   reducer: {
-    movieFavorites,
-    movieSearch,
-    movieDiscovery,
+    search,
+    movies,
+    favorites,
   },
 })
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
 export type RootState = ReturnType<typeof store.getState>
 // Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
+
 export type AppDispatch = typeof store.dispatch
