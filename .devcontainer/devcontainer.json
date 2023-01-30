@@ -1,0 +1,8 @@
+{
+  "name": "moviesnacks dev container",
+  "dockerFile": "Dockerfile",
+  "appPort": [5173],
+  "runArgs": ["-u", "node"],
+  "postCreateCommand": "npm install",
+  "extensions": ["dbaeumer.vscode-eslint", "esbenp.prettier-vscode"]
+}
